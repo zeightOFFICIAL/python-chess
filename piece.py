@@ -3,6 +3,7 @@ import os
 
 # resources -------------------------------------------------
 from flowingconfig import *
+
 b_bishop = pygame.image.load("res/images/b_bishop.png")
 b_king = pygame.image.load("res/images/b_king.png")
 b_knight = pygame.image.load("res/images/b_knight.png")
@@ -21,7 +22,6 @@ black_all = [b_bishop, b_king, b_knight, b_pawn, b_queen, b_rook]
 white_all = [w_bishop, w_king, w_knight, w_pawn, w_queen, w_rook]
 black_all_scaled = []
 white_all_scaled = []
-
 
 for img in black_all:
     black_all_scaled.append(pygame.transform.smoothscale(img, (scalex_size, scaley_size)))
@@ -63,11 +63,11 @@ class Piece:
             for move in moves:
                 x = self.startX + (move[0] * bot_right_corner[0] / 8) + (scaley_size // 2)
                 y = self.startY + (move[1] * bot_right_corner[1] / 8) + (scaley_size // 2)
-                pygame.draw.circle(win, (255,0,0), (x,y), 10,)
-        x = self.startX + (self.col * bot_right_corner[0]/8)
-        y = self.startY + (self.row * bot_right_corner[1]/8)
+                pygame.draw.circle(win, (255, 0, 0), (x, y), 10, )
+        x = self.startX + (self.col * bot_right_corner[0] / 8)
+        y = self.startY + (self.row * bot_right_corner[1] / 8)
         if self.selected:
-            pygame.draw.rect(win, (255,0,0), (x, y, scalex_size, scaley_size), 2)
+            pygame.draw.rect(win, (255, 0, 0), (x, y, scalex_size, scaley_size), 2)
         win.blit(drawthis, (x, y))
 
     def change_pos(self, pos):

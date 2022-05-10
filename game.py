@@ -14,10 +14,11 @@ raw_board = pygame.image.load("res/images/eq_chessboard.png")
 board = pygame.transform.scale(raw_board, (width - margin_abs, height - margin_abs))
 
 
-def redraw_gamewindow(win, bo, p1time, p2time):
+def redraw_gamewindow(win, bo, p1time, p2time, statewhite, stateblack):
     win.blit(board, (margin_abs_half, margin_abs_half))
     bo.draw(win)
-    font = pygame.font.SysFont("console", 20)
+    font = pygame.font.SysFont("console", 17)
+    font2 = pygame.font.SysFont("console", 25)
     f1time = str(p1time//60)+":"+str(p1time%60)
     f2time = str(p2time//60)+":"+str(p2time%60)
     if p1time % 60 == 0: f1time += "0"
@@ -26,8 +27,16 @@ def redraw_gamewindow(win, bo, p1time, p2time):
     elif p2time < 10: f2time = str(p2time//60) + ":" + "0" + str(p2time%60)
     txttime1 = font.render("Player 1 Time: " + str(f1time), True, (255, 255, 255), (0, 0, 0))
     txttime2 = font.render("Player 2 Time: " + str(f2time), True, (255, 255, 255), (0, 0, 0))
+    txtstate1 = font2.render("Player 1 King is under check!", True, (0, 0, 0), (0, 0, 0))
+    txtstate2 = font2.render("Player 1 King is under check!", True, (0, 0, 0), (0, 0, 0))
+    if statewhite:
+        txtstate1 = font2.render("Player 1 King is under check!", True, (255, 255, 255), (0, 0, 0))
+    if stateblack:
+        txtstate2 = font2.render("Player 2 King is under check!", True, (255, 255, 255), (0, 0, 0))
     win.blit(txttime1, (20, 700))
     win.blit(txttime2, (20, 20))
+    win.blit(txtstate1, (width // 2, margin_abs_half))
+    win.blit(txtstate2, (width // 2, margin_abs_half))
     pygame.display.update()
 
 
@@ -52,6 +61,8 @@ def main():
     bo.update_moves()
     clock = pygame.time.Clock()
     run = True
+    statewhite = 0
+    stateblack = 0
     while run:
         clock.tick(fps_max)
         time_gone = int(time.time() - wide_timer)
@@ -60,7 +71,7 @@ def main():
         else:
             p2time -= (time.time() - wide_timer)
         wide_timer = time.time()
-        redraw_gamewindow(win, bo, int(p1time), int(p2time))
+        redraw_gamewindow(win, bo, int(p1time), int(p2time), statewhite, stateblack)
         for event in pygame.event.get():
             timer = time.time() - wide_timer
             if event.type == pygame.QUIT:
@@ -81,9 +92,16 @@ def main():
                         else:
                             turn = "w"
             if bo.is_checked("w"):
-                print("White check")
+                print("log: White check")
+                statewhite = 1
+            else:
+                statewhite = 0
+
             if bo.is_checked("b"):
-                print("Black check")
+                print("log: Black check")
+                stateblack = 1
+            else:
+                stateblack = 0
 
 
 win = pygame.display.set_mode((width, height))

@@ -29,8 +29,8 @@ class Board:
         self.board[7][5] = Bishop(7, 5, "w")
         self.board[7][6] = Knight(7, 6, "w")
         self.board[7][7] = Rook(7, 7, "w")
-        #for line in range(0, 8):
-        #    self.board[6][line] = Pawn(6, line, "w")
+        for line in range(0, 8):
+            self.board[6][line] = Pawn(6, line, "w")
 
     def update_moves(self):
         for i in range(self.rows):
@@ -77,12 +77,30 @@ class Board:
                     if self.board[i][j].selected:
                         prev = (i, j)
         if self.board[row][col] == 0:
+            try:
+                _ = self.board[prev[0]][prev[1]].move_list
+            except AttributeError:
+                # print("board.select: warning(0) attribute error")
+                prev = (-1, -1)
+                changed = False
+                self.reset_selected()
+                return changed
             moves = self.board[prev[0]][prev[1]].move_list
             if (col, row) in moves:
                 self.move(prev, (row, col))
                 changed = True
             self.reset_selected()
         else:
+            try:
+                _ = self.board[prev[0]][prev[1]].color != self.board[row][col].color
+            except AttributeError:
+                prev = (-1, -1)
+                changed = False
+                # print("board.select: warning(0) attribute error")
+                self.reset_selected()
+                if self.board[row][col].color == color:
+                    self.board[row][col].selected = True
+                return changed
             if self.board[prev[0]][prev[1]].color != self.board[row][col].color:
                 moves = self.board[prev[0]][prev[1]].move_list
                 if (col, row) in moves:
