@@ -29,7 +29,7 @@ class Board:
         self.board[7][5] = Bishop(7, 5, "w")
         self.board[7][6] = Knight(7, 6, "w")
         self.board[7][7] = Rook(7, 7, "w")
-        #for line in range(0, 7):
+        #for line in range(0, 8):
         #    self.board[6][line] = Pawn(6, line, "w")
 
     def update_moves(self):
@@ -43,6 +43,29 @@ class Board:
             for j in range(self.cols):
                 if self.board[i][j] != 0:
                     self.board[i][j].draw(win)
+
+    def get_danger_moves(self, color):
+        danger_moves = []
+        for i in range(self.rows):
+            for j in range(self.cols):
+                if self.board[i][j] != 0:
+                    if self.board[i][j].color != color:
+                        for move in self.board[i][j].move_list:
+                            danger_moves.append(move)
+        return danger_moves
+
+    def is_checked(self, color):
+        self.update_moves()
+        danger_moves = self.get_danger_moves(color)
+        king_pos = (-1, -1)
+        for i in range(self.rows):
+            for j in range(self.cols):
+                if self.board[i][j] != 0:
+                    if self.board[i][j].king and self.board[i][j].color == color:
+                        king_pos = (j, i)
+        if king_pos in danger_moves:
+            return True
+        return False
 
     def select(self, col, row):
         prev = (-1, -1)
@@ -80,6 +103,8 @@ class Board:
 
     def move(self, src, dst):
         nBoard = self.board[:]
+        if nBoard[src[0]][src[1]].pawn:
+            nBoard[src[0]][src[1]].first = False
         nBoard[src[0]][src[1]].change_pos((dst[0], dst[1]))
         nBoard[dst[0]][dst[1]] = nBoard[src[0]][src[1]]
         nBoard[src[0]][src[1]] = 0

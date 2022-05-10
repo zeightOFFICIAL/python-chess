@@ -40,6 +40,9 @@ class Piece:
         self.color = color
         self.selected = False
         self.move_list = []
+        self.king = False
+        self.pawn = False
+        self.queen = False
 
     def move(self):
         pass

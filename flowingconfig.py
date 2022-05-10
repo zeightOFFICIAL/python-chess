@@ -4,6 +4,7 @@ height = 750
 margin_abs = 130
 margin_abs_half = margin_abs // 2
 visual_set = 0
+fps_max = 24
 
 # calculated vars
 top_left_corner = (margin_abs_half, margin_abs_half)     # 50, 50

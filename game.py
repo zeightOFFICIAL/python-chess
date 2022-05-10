@@ -34,10 +34,11 @@ def click(pos):
 def main():
     global bo
     bo = Board(8, 8)
+    bo.update_moves()
     clock = pygame.time.Clock()
     run = True
     while run:
-        clock.tick(24)
+        clock.tick(fps_max)
         redraw_gamewindow()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -51,7 +52,10 @@ def main():
                     i, j = click(pos)
                     bo.select(i, j)
                     bo.update_moves()
-
+                    if bo.is_checked("w"):
+                        print("White check")
+                    if bo.is_checked("b"):
+                        print("Black check")
 
 
 win = pygame.display.set_mode((width, height))
