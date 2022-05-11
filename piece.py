@@ -70,7 +70,12 @@ class Piece:
         y = self.startY + (self.row * bot_right_corner[1] / 8)
         if self.selected:
             pygame.draw.rect(win, (255, 0, 0), (x, y, scalex_size, scaley_size), 2)
-            drawthis = pygame.transform.smoothscale(drawthis, (scaley_size+increasing_size, scaley_size+increasing_size))
+            if self.color == "w":
+                drawthis = pygame.transform.smoothscale(white_all[self.img],
+                                                        (scaley_size+increasing_size, scaley_size+increasing_size))
+            else:
+                drawthis = pygame.transform.smoothscale(black_all[self.img],
+                                                        (scaley_size + increasing_size, scaley_size + increasing_size))
             win.blit(drawthis, (x-increasing_size/2, y-increasing_size/2))
         else:
             win.blit(drawthis, (x, y))
