@@ -70,7 +70,7 @@ class Board:
     def select(self, col, row, color):
         prev = (-1, -1)
         changed = False
-        # print("log:", self.anyselected, col, row)
+        # print("log:", col, row)
         for i in range(self.rows):
             for j in range(self.cols):
                 if self.board[i][j] != 0:

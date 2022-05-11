@@ -15,6 +15,7 @@ board = pygame.transform.scale(raw_board, (width - margin_abs, height - margin_a
 
 def redraw_gamewindow(win, bo, p1time, p2time, statewhite, stateblack):
     pygame.font.init()
+    pygame.draw.rect(win, (0, 0, 0), (0, 0, width, width))
     win.blit(board, (margin_abs_half, margin_abs_half))
     bo.draw(win)
     font = pygame.font.SysFont("console", 17)
@@ -31,8 +32,6 @@ def redraw_gamewindow(win, bo, p1time, p2time, statewhite, stateblack):
         f2time += "0"
     txttime1 = font.render("Player 1 Time: " + str(f1time), True, (255, 255, 255), (0, 0, 0))
     txttime2 = font.render("Player 2 Time: " + str(f2time), True, (255, 255, 255), (0, 0, 0))
-    txtstate1 = font2.render("Player 1 King is under check!", True, (0, 0, 0), (0, 0, 0))
-    txtstate2 = font2.render("Player 1 King is under check!", True, (0, 0, 0), (0, 0, 0))
     if statewhite == 1:
         txtstate1 = font2.render("White King is under check!", True, (255, 255, 255), (0, 0, 0))
     else:
@@ -93,7 +92,6 @@ def main():
     stateblack = 0
     while run:
         clock.tick(fps_max)
-        time_gone = int(time.time() - wide_timer)
         if turn == "w":
             p1time -= (time.time() - wide_timer)
         else:
@@ -115,27 +113,31 @@ def main():
                     if change:
                         wide_timer = time.time()
                         if turn == "w":
+                            if bo.is_checked("w") and statewhite == 1:
+                                end_screen(win, "Black Wins!")
+                            if bo.is_checked("b") and stateblack == 1:
+                                end_screen(win, "White Wins!")
                             turn = "b"
                         else:
+                            if bo.is_checked("b") and stateblack == 1:
+                                end_screen(win, "White Wins!")
+                            if bo.is_checked("w") and statewhite == 1:
+                                end_screen(win, "Black Wins!")
                             turn = "w"
 
-                if bo.is_checked("w") and statewhite == 1:
-                    end_screen(win, "Black Wins!")
-                elif bo.is_checked("w"):
+                if bo.is_checked("w"):
                     print("log: White check")
                     statewhite = 1
                 else:
                     statewhite = 0
-
-                if bo.is_checked("b") and stateblack == 1:
-                    end_screen(win, "Black Wins!")
-                elif bo.is_checked("b"):
+                if bo.is_checked("b"):
                     print("log: Black check")
                     stateblack = 1
                 else:
                     stateblack = 0
 
-win = pygame.display.set_mode((width, height))
+
+win = pygame.display.set_mode((width, height), vsync=True)
 pygame.display.set_caption("PyChess")
 pygame.display.set_icon(icon)
 main()

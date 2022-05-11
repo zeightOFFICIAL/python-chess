@@ -16,6 +16,8 @@ w_knight = pygame.image.load("res/images/w_knight.png")
 w_pawn = pygame.image.load("res/images/w_pawn.png")
 w_queen = pygame.image.load("res/images/w_queen.png")
 w_rook = pygame.image.load("res/images/w_rook.png")
+raw_select = pygame.image.load("res/images/b_select.png")
+#raw_select_of = pygame.image.load("res/images/selected.png")
 # -----------------------------------------------------------
 
 black_all = [b_bishop, b_king, b_knight, b_pawn, b_queen, b_rook]
@@ -27,7 +29,7 @@ for img in black_all:
     black_all_scaled.append(pygame.transform.smoothscale(img, (scalex_size, scaley_size)))
 for img in white_all:
     white_all_scaled.append(pygame.transform.smoothscale(img, (scalex_size, scaley_size)))
-
+scaled_select = pygame.transform.smoothscale(raw_select, (scalex_size, scaley_size))
 
 class Piece:
     img = -1
@@ -63,12 +65,15 @@ class Piece:
             for move in moves:
                 x = self.startX + (move[0] * bot_right_corner[0] / 8) + (scaley_size // 2)
                 y = self.startY + (move[1] * bot_right_corner[1] / 8) + (scaley_size // 2)
-                pygame.draw.circle(win, (255, 0, 0), (x, y), 10, )
+                win.blit(scaled_select, (x-scalex_size/2, y-scaley_size/2))
         x = self.startX + (self.col * bot_right_corner[0] / 8)
         y = self.startY + (self.row * bot_right_corner[1] / 8)
         if self.selected:
             pygame.draw.rect(win, (255, 0, 0), (x, y, scalex_size, scaley_size), 2)
-        win.blit(drawthis, (x, y))
+            drawthis = pygame.transform.smoothscale(drawthis, (scaley_size+increasing_size, scaley_size+increasing_size))
+            win.blit(drawthis, (x-increasing_size/2, y-increasing_size/2))
+        else:
+            win.blit(drawthis, (x, y))
 
     def change_pos(self, pos):
         self.row = pos[0]
