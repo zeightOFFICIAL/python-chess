@@ -6,7 +6,6 @@ class Board:
         self.rows = rows
         self.cols = cols
         self.board = [[0 for x in range(8)] for y in range(8)]
-        self.anyselected = False
         self.set_start()
 
     def set_start(self):
@@ -54,6 +53,7 @@ class Board:
                             danger_moves.append(move)
         return danger_moves
 
+
     def is_checked(self, color):
         self.update_moves()
         danger_moves = self.get_danger_moves(color)
@@ -87,7 +87,7 @@ class Board:
                 return changed
             moves = self.board[prev[0]][prev[1]].move_list
             if (col, row) in moves:
-                self.move(prev, (row, col))
+                self.move(prev, (row, col), color)
                 changed = True
             self.reset_selected()
         else:
@@ -105,7 +105,7 @@ class Board:
                 moves = self.board[prev[0]][prev[1]].move_list
                 if (col, row) in moves:
                     changed = True
-                    self.move(prev, (row, col))
+                    self.move(prev, (row, col), color)
                 self.reset_selected()
                 if self.board[row][col].color == color:
                     self.board[row][col].selected = True
@@ -121,11 +121,24 @@ class Board:
                 if self.board[i][j] != 0:
                     self.board[i][j].selected = False
 
-    def move(self, src, dst):
+    def move(self, src, dst, color):
+        oldBoard = self.board[:]
         nBoard = self.board[:]
+        try:
+            nBoard[src[0]][src[1]].change_pos((dst[0], dst[1]))
+        except AttributeError:
+            return
         if nBoard[src[0]][src[1]].pawn:
             nBoard[src[0]][src[1]].first = False
         nBoard[src[0]][src[1]].change_pos((dst[0], dst[1]))
         nBoard[dst[0]][dst[1]] = nBoard[src[0]][src[1]]
         nBoard[src[0]][src[1]] = 0
         self.board = nBoard
+
+        if self.is_checked(color):
+            self.board = oldBoard
+            try:
+                nBoard[src[0]][src[1]].change_pos((src[0], src[1]))
+            except AttributeError:
+                return
+
