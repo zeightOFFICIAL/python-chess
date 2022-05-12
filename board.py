@@ -53,7 +53,6 @@ class Board:
                             danger_moves.append(move)
         return danger_moves
 
-
     def is_checked(self, color):
         self.update_moves()
         danger_moves = self.get_danger_moves(color)
@@ -87,8 +86,7 @@ class Board:
                 return changed
             moves = self.board[prev[0]][prev[1]].move_list
             if (col, row) in moves:
-                self.move(prev, (row, col), color)
-                changed = True
+                changed = self.move(prev, (row, col), color)
             self.reset_selected()
         else:
             try:
@@ -96,16 +94,12 @@ class Board:
             except AttributeError:
                 prev = (-1, -1)
                 changed = False
-                # print("board.select: warning(0) attribute error")
                 self.reset_selected()
-                if self.board[row][col].color == color:
-                    self.board[row][col].selected = True
                 return changed
             if self.board[prev[0]][prev[1]].color != self.board[row][col].color:
                 moves = self.board[prev[0]][prev[1]].move_list
                 if (col, row) in moves:
-                    changed = True
-                    self.move(prev, (row, col), color)
+                    changed = self.move(prev, (row, col), color)
                 self.reset_selected()
                 if self.board[row][col].color == color:
                     self.board[row][col].selected = True
@@ -122,23 +116,34 @@ class Board:
                     self.board[i][j].selected = False
 
     def move(self, src, dst, color):
-        oldBoard = self.board[:]
-        nBoard = self.board[:]
+        checked_before = self.is_checked(color)
+        changed = True
+        new_board = self.board[:]
         try:
-            nBoard[src[0]][src[1]].change_pos((dst[0], dst[1]))
+            _ = new_board[src[0]][src[1]].pawn
+            new_board[src[0]][src[1]].change_pos((dst[0], dst[1]))
         except AttributeError:
             return
-        if nBoard[src[0]][src[1]].pawn:
-            nBoard[src[0]][src[1]].first = False
-        nBoard[src[0]][src[1]].change_pos((dst[0], dst[1]))
-        nBoard[dst[0]][dst[1]] = nBoard[src[0]][src[1]]
-        nBoard[src[0]][src[1]] = 0
-        self.board = nBoard
+        if new_board[src[0]][src[1]].pawn:
+            new_board[src[0]][src[1]].first = False
+        new_board[dst[0]][dst[1]] = new_board[src[0]][src[1]]
+        new_board[src[0]][src[1]] = 0
+        self.board = new_board
 
-        if self.is_checked(color):
-            self.board = oldBoard
+        if self.is_checked(color) or (checked_before and self.is_checked(color)):
+            changed = False
+            new_board = self.board
             try:
-                nBoard[src[0]][src[1]].change_pos((src[0], src[1]))
+                _ = new_board[dst[0]][dst[1]].pawn
+                new_board[dst[0]][dst[1]].change_pos((src[0], src[1]))
             except AttributeError:
                 return
-
+            if new_board[dst[0]][dst[1]].pawn:
+                new_board[dst[0]][dst[1]].first = True
+            new_board[src[0]][src[1]] = new_board[dst[0]][dst[1]]
+            new_board[dst[0]][dst[1]] = 0
+            self.board = new_board
+        else:
+            self.reset_selected()
+        self.update_moves()
+        return changed

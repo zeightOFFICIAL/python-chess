@@ -49,11 +49,11 @@ def redraw_gamewindow(win, bo, p1time, p2time, statewhite, stateblack):
 
 def end_screen(win, text, total_time):
     pygame.font.init()
-    font = pygame.font.SysFont("arial", 60)
+    font = pygame.font.SysFont("arial", 70)
     font.set_bold(True)
     txt = font.render(text, True, (255, 0, 0))
 
-    font2 = pygame.font.SysFont("arial", 30)
+    font2 = pygame.font.SysFont("arial", 35)
     font2.set_bold(True)
     total_time = int(total_time)
     ftime = str(total_time//60)+":"+str(total_time%60)
@@ -108,8 +108,12 @@ def main():
         clock.tick(fps_max)
         if turn == "w":
             p1time -= (time.time() - wide_timer)
+            if p1time <= 0:
+                end_screen(win, "Black Wins!", time.time() - start_time)
         else:
             p2time -= (time.time() - wide_timer)
+            if p2time <= 0:
+                end_screen(win, "White Wins!", time.time() - start_time)
         wide_timer = time.time()
         redraw_gamewindow(win, bo, int(p1time), int(p2time), statewhite, stateblack)
         for event in pygame.event.get():
@@ -127,14 +131,14 @@ def main():
                     if change:
                         wide_timer = time.time()
                         if turn == "w":
-                            print("log: time", time.time() - start_time)
+                            # print("log: time", time.time() - start_time)
                             if bo.is_checked("w") and statewhite == 1:
                                 end_screen(win, "Black Wins!", time.time() - start_time)
                             if bo.is_checked("b") and stateblack == 1:
                                 end_screen(win, "White Wins!", time.time() - start_time)
                             turn = "b"
                         else:
-                            print("log: time", time.time() - start_time)
+                            # print("log: time", time.time() - start_time)
                             if bo.is_checked("b") and stateblack == 1:
                                 end_screen(win, "White Wins!", time.time() - start_time)
                             if bo.is_checked("w") and statewhite == 1:
@@ -142,12 +146,12 @@ def main():
                             turn = "w"
 
                 if bo.is_checked("w"):
-                    print("log: White check")
+                    # print("log: White check")
                     statewhite = 1
                 else:
                     statewhite = 0
                 if bo.is_checked("b"):
-                    print("log: Black check")
+                    # print("log: Black check")
                     stateblack = 1
                 else:
                     stateblack = 0
