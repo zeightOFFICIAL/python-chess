@@ -3,7 +3,6 @@ import os
 
 # resources -------------------------------------------------
 from flowingconfig import *
-
 b_bishop = pygame.image.load("res/images/b_bishop.png")
 b_king = pygame.image.load("res/images/b_king.png")
 b_knight = pygame.image.load("res/images/b_knight.png")
@@ -17,7 +16,7 @@ w_pawn = pygame.image.load("res/images/w_pawn.png")
 w_queen = pygame.image.load("res/images/w_queen.png")
 w_rook = pygame.image.load("res/images/w_rook.png")
 raw_select = pygame.image.load("res/images/b_select.png")
-#raw_select_of = pygame.image.load("res/images/selected.png")
+raw_select2 = pygame.image.load("res/images/b2_select.png")
 # -----------------------------------------------------------
 
 black_all = [b_bishop, b_king, b_knight, b_pawn, b_queen, b_rook]
@@ -30,6 +29,7 @@ for img in black_all:
 for img in white_all:
     white_all_scaled.append(pygame.transform.smoothscale(img, (cell_size_x, cell_size_y)))
 scaled_select = pygame.transform.smoothscale(raw_select, (cell_size_x, cell_size_y))
+scaled_select2 = pygame.transform.smoothscale(raw_select2, (cell_size_x, cell_size_y))
 
 class Piece:
     img = -1
@@ -65,11 +65,13 @@ class Piece:
             for move in moves:
                 x = self.startX + (move[0] * bottom_right_corner[0] / 8) + (cell_size_y // 2)
                 y = self.startY + (move[1] * bottom_right_corner[1] / 8) + (cell_size_y // 2)
-                win.blit(scaled_select, (x - cell_size_x / 2, y - cell_size_y / 2))
+                if self.color == "w":
+                    win.blit(scaled_select, (x - cell_size_x / 2, y - cell_size_y / 2))
+                else:
+                    win.blit(scaled_select2, (x - cell_size_x / 2, y - cell_size_y / 2))
         x = self.startX + (self.col * bottom_right_corner[0] / 8)
         y = self.startY + (self.row * bottom_right_corner[1] / 8)
         if self.selected:
-            pygame.draw.rect(win, (255, 0, 0), (x, y, cell_size_x, cell_size_y), 2)
             if self.color == "w":
                 drawthis = pygame.transform.smoothscale(white_all[self.img],
                                                         (cell_size_y + pop_increasing_size, cell_size_y + pop_increasing_size))
