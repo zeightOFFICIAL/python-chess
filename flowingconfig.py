@@ -1,23 +1,27 @@
-# enviroment settings
+# defaults
 fps_max = 24
 width = 750
-height = width
-margin_abs = 130
-margin_abs_half = margin_abs // 2
-
-# game settings
+padding_absolute = 130
 visual_set = 0
-set_player_minutes = 30
+time_restriction = 30
+pop_increasing_size = 55
 
-# calculated and static vars
-top_left_corner = (margin_abs_half, margin_abs_half)     # 50, 50
-bot_right_corner = (width-margin_abs, width-margin_abs)  # 650, 650
-top_right_corner = (width-margin_abs, margin_abs_half)   # 650, 50
-bot_left_corner = (margin_abs_half, width-margin_abs)    # 50, 650
-scalex_size = (width - margin_abs) / 8
-scaley_size = (height - margin_abs) / 8
-player_time = 60 * set_player_minutes
-increasing_size = 55
-
-def load_config():
+try:
+    f = open("config.txt")
+    lines = f.readlines()
+    for line in lines:
+        name = str(line.split("=")[0])
+        var = int(line.split("=")[1])
+        locals()[name] = var
+except FileNotFoundError:
     pass
+
+height = width
+padding_abs_half = padding_absolute // 2
+top_left_corner = (padding_abs_half, padding_abs_half)
+bottom_right_corner = (width - padding_absolute, width - padding_absolute)
+top_right_corner = (width - padding_absolute, padding_abs_half)
+bottom_left_corner = (padding_abs_half, width - padding_absolute)
+cell_size_x = (width - padding_absolute) / 8
+cell_size_y = (height - padding_absolute) / 8
+time_restriction_seconds = 60 * time_restriction

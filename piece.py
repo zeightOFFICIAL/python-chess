@@ -26,10 +26,10 @@ black_all_scaled = []
 white_all_scaled = []
 
 for img in black_all:
-    black_all_scaled.append(pygame.transform.smoothscale(img, (scalex_size, scaley_size)))
+    black_all_scaled.append(pygame.transform.smoothscale(img, (cell_size_x, cell_size_y)))
 for img in white_all:
-    white_all_scaled.append(pygame.transform.smoothscale(img, (scalex_size, scaley_size)))
-scaled_select = pygame.transform.smoothscale(raw_select, (scalex_size, scaley_size))
+    white_all_scaled.append(pygame.transform.smoothscale(img, (cell_size_x, cell_size_y)))
+scaled_select = pygame.transform.smoothscale(raw_select, (cell_size_x, cell_size_y))
 
 class Piece:
     img = -1
@@ -63,20 +63,20 @@ class Piece:
         if self.selected:
             moves = self.move_list
             for move in moves:
-                x = self.startX + (move[0] * bot_right_corner[0] / 8) + (scaley_size // 2)
-                y = self.startY + (move[1] * bot_right_corner[1] / 8) + (scaley_size // 2)
-                win.blit(scaled_select, (x-scalex_size/2, y-scaley_size/2))
-        x = self.startX + (self.col * bot_right_corner[0] / 8)
-        y = self.startY + (self.row * bot_right_corner[1] / 8)
+                x = self.startX + (move[0] * bottom_right_corner[0] / 8) + (cell_size_y // 2)
+                y = self.startY + (move[1] * bottom_right_corner[1] / 8) + (cell_size_y // 2)
+                win.blit(scaled_select, (x - cell_size_x / 2, y - cell_size_y / 2))
+        x = self.startX + (self.col * bottom_right_corner[0] / 8)
+        y = self.startY + (self.row * bottom_right_corner[1] / 8)
         if self.selected:
-            pygame.draw.rect(win, (255, 0, 0), (x, y, scalex_size, scaley_size), 2)
+            pygame.draw.rect(win, (255, 0, 0), (x, y, cell_size_x, cell_size_y), 2)
             if self.color == "w":
                 drawthis = pygame.transform.smoothscale(white_all[self.img],
-                                                        (scaley_size+increasing_size, scaley_size+increasing_size))
+                                                        (cell_size_y + pop_increasing_size, cell_size_y + pop_increasing_size))
             else:
                 drawthis = pygame.transform.smoothscale(black_all[self.img],
-                                                        (scaley_size + increasing_size, scaley_size + increasing_size))
-            win.blit(drawthis, (x-increasing_size/2, y-increasing_size/2))
+                                                        (cell_size_y + pop_increasing_size, cell_size_y + pop_increasing_size))
+            win.blit(drawthis, (x - pop_increasing_size / 2, y - pop_increasing_size / 2))
         else:
             win.blit(drawthis, (x, y))
 

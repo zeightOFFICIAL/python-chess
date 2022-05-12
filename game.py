@@ -1,22 +1,22 @@
+# python libraries ------------------------------------------
 import pygame
-import os
 import time
 
+# project libraries -----------------------------------------
 from board import Board
-
 
 # resources -------------------------------------------------
 from flowingconfig import *
 raw_board = pygame.image.load("res/images/eq_chessboard.png")
 icon = pygame.image.load("res/images/icon.png")
-board = pygame.transform.scale(raw_board, (width - margin_abs, height - margin_abs))
-# -----------------------------------------------------------
+board = pygame.transform.scale(raw_board, (width - padding_absolute, height - padding_absolute))
 
 
+# functinos -------------------------------------------------
 def redraw_gamewindow(win, bo, p1time, p2time, statewhite, stateblack):
     pygame.font.init()
     pygame.draw.rect(win, (0, 0, 0), (0, 0, width, width))
-    win.blit(board, (margin_abs_half, margin_abs_half))
+    win.blit(board, (padding_abs_half, padding_abs_half))
     bo.draw(win)
     font = pygame.font.SysFont("console", 17)
     font2 = pygame.font.SysFont("console", 25)
@@ -40,10 +40,10 @@ def redraw_gamewindow(win, bo, p1time, p2time, statewhite, stateblack):
         txtstate2 = font2.render("Black King is under check!", True, (255, 255, 255), (0, 0, 0))
     else:
         txtstate2 = font2.render("Black King is under check!", True, (0, 0, 0), (0, 0, 0))
-    win.blit(txttime1, (width - margin_abs_half - txttime1.get_width(), width - margin_abs_half + txttime1.get_height()))
-    win.blit(txttime2, (margin_abs_half, margin_abs_half - txttime2.get_height()*2))
-    win.blit(txtstate1, (margin_abs_half, width - margin_abs_half / 1.5))
-    win.blit(txtstate2, (width - margin_abs_half - txtstate2.get_width(), margin_abs_half - txtstate2.get_height()*1.5))
+    win.blit(txttime1, (width - padding_abs_half - txttime1.get_width(), width - padding_abs_half + txttime1.get_height()))
+    win.blit(txttime2, (padding_abs_half, padding_abs_half - txttime2.get_height() * 2))
+    win.blit(txtstate1, (padding_abs_half, width - padding_abs_half / 1.5))
+    win.blit(txtstate2, (width - padding_abs_half - txtstate2.get_width(), padding_abs_half - txtstate2.get_height() * 1.5))
     pygame.display.update()
 
 
@@ -75,26 +75,28 @@ def end_screen(win, text, total_time):
                 quit()
                 run = False
             elif event.type == pygame.KEYDOWN:
-                run = False
-            elif event.type == pygame.USEREVENT + 1:
-                run = False
-
+                if event.key == pygame.K_q:
+                    run = False
+                    quit()
+                    pygame.quit()
+                if event.key == pygame.K_r:
+                    main()
 
 def click(pos):
     x = pos[0]
     y = pos[1]
-    if top_left_corner[0] < x < top_left_corner[0] + bot_right_corner[0]:
-        if top_left_corner[1] < y < top_left_corner[1] + bot_right_corner[1]:
+    if top_left_corner[0] < x < top_left_corner[0] + bottom_right_corner[0]:
+        if top_left_corner[1] < y < top_left_corner[1] + bottom_right_corner[1]:
             divx = x - top_left_corner[0]
             divy = y - top_left_corner[0]
-            i = int(divx / (bot_right_corner[0] / 8))
-            j = int(divy / (bot_right_corner[1] / 8))
+            i = int(divx / (bottom_right_corner[0] / 8))
+            j = int(divy / (bottom_right_corner[1] / 8))
             return i, j
 
-
+# main ------------------------------------------------------
 def main():
-    p1time = player_time
-    p2time = player_time
+    p1time = time_restriction_seconds
+    p2time = time_restriction_seconds
     wide_timer = time.time()
     start_time = time.time()
     turn = "w"
@@ -104,6 +106,8 @@ def main():
     run = True
     statewhite = 0
     stateblack = 0
+    count_white = 0
+    count_black = 0
     while run:
         clock.tick(fps_max)
         if turn == "w":
@@ -121,10 +125,28 @@ def main():
                 run = False
                 quit()
                 pygame.quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q:
+                    run = False
+                    quit()
+                    pygame.quit()
+                if event.key == pygame.K_s:
+                    if turn == "w":
+                        end_screen(win, "Black Wins!", time.time() - start_time)
+                    else:
+                        end_screen(win, "White Wins!", time.time() - start_time)
+                if event.key == pygame.K_p:
+                    if turn == "w":
+                        count_white = 1
+                    if turn == "b":
+                        count_black = 1
+                    if count_black and count_white:
+                        end_screen(win, "Draw!", time.time() - start_time)
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 bo.update_moves()
-                if margin_abs_half < pos[0] < width - margin_abs_half and margin_abs_half < pos[1] < width - margin_abs_half:
+                if padding_abs_half < pos[0] < width - padding_abs_half and padding_abs_half < pos[1] < width - padding_abs_half:
                     i, j = click(pos)
                     try:
                         change = bo.select(i, j, turn)
