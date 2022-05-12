@@ -17,8 +17,8 @@ class Board:
         self.board[0][5] = Bishop(0, 5, "b")
         self.board[0][6] = Knight(0, 6, "b")
         self.board[0][7] = Rook(0, 7, "b")
-        for line in range(0, 8):
-            self.board[1][line] = Pawn(1, line, "b")
+        #for line in range(0, 8):
+        #    self.board[1][line] = Pawn(1, line, "b")
 
         self.board[7][0] = Rook(7, 0, "w")
         self.board[7][1] = Knight(7, 1, "w")
@@ -28,8 +28,8 @@ class Board:
         self.board[7][5] = Bishop(7, 5, "w")
         self.board[7][6] = Knight(7, 6, "w")
         self.board[7][7] = Rook(7, 7, "w")
-        for line in range(0, 8):
-            self.board[6][line] = Pawn(6, line, "w")
+        #for line in range(0, 8):
+        #    self.board[6][line] = Pawn(6, line, "w")
 
     def update_moves(self):
         for i in range(self.rows):
@@ -75,38 +75,28 @@ class Board:
                 if self.board[i][j] != 0:
                     if self.board[i][j].selected:
                         prev = (i, j)
-        if self.board[row][col] == 0:
-            try:
-                _ = self.board[prev[0]][prev[1]].move_list
-            except AttributeError:
-                # print("board.select: warning(0) attribute error")
-                prev = (-1, -1)
-                changed = False
-                self.reset_selected()
-                return changed
+        if self.board[row][col] == 0 and prev != (-1, -1):
             moves = self.board[prev[0]][prev[1]].move_list
             if (col, row) in moves:
                 changed = self.move(prev, (row, col), color)
             self.reset_selected()
         else:
-            try:
-                _ = self.board[prev[0]][prev[1]].color != self.board[row][col].color
-            except AttributeError:
-                prev = (-1, -1)
-                changed = False
+            if prev == (-1 ,-1):
                 self.reset_selected()
-                return changed
-            if self.board[prev[0]][prev[1]].color != self.board[row][col].color:
-                moves = self.board[prev[0]][prev[1]].move_list
-                if (col, row) in moves:
-                    changed = self.move(prev, (row, col), color)
-                self.reset_selected()
-                if self.board[row][col].color == color:
+                if self.board[row][col] != 0 and self.board[row][col].color == color:
                     self.board[row][col].selected = True
             else:
-                self.reset_selected()
-                if self.board[row][col].color == color:
-                    self.board[row][col].selected = True
+                if self.board[prev[0]][prev[1]].color != self.board[row][col].color:
+                    moves = self.board[prev[0]][prev[1]].move_list
+                    if (col, row) in moves:
+                        changed = self.move(prev, (row, col), color)
+                    self.reset_selected()
+                    if self.board[row][col].color == color:
+                        self.board[row][col].selected = True
+                else:
+                    self.reset_selected()
+                    if self.board[row][col].color == color:
+                        self.board[row][col].selected = True
         return changed
 
     def reset_selected(self):
@@ -119,27 +109,21 @@ class Board:
         checked_before = self.is_checked(color)
         changed = True
         new_board = self.board[:]
-        try:
-            _ = new_board[src[0]][src[1]].pawn
-            new_board[src[0]][src[1]].change_pos((dst[0], dst[1]))
-        except AttributeError:
-            return
         if new_board[src[0]][src[1]].pawn:
             new_board[src[0]][src[1]].first = False
+        new_board[src[0]][src[1]].change_pos((dst[0], dst[1]))
         new_board[dst[0]][dst[1]] = new_board[src[0]][src[1]]
         new_board[src[0]][src[1]] = 0
         self.board = new_board
 
-        if self.is_checked(color) or (checked_before and self.is_checked(color)):
+        if self.is_checked(color) and not (checked_before and self.is_checked(color)):
+            print(self.is_checked(color), (checked_before and self.is_checked(color)))
             changed = False
-            new_board = self.board
-            try:
-                _ = new_board[dst[0]][dst[1]].pawn
-                new_board[dst[0]][dst[1]].change_pos((src[0], src[1]))
-            except AttributeError:
-                return
+            new_board = self.board[:]
+            new_board[dst[0]][dst[1]].change_pos((src[0], src[1]))
             if new_board[dst[0]][dst[1]].pawn:
                 new_board[dst[0]][dst[1]].first = True
+            new_board[dst[0]][dst[1]].change_pos((src[0], src[1]))
             new_board[src[0]][src[1]] = new_board[dst[0]][dst[1]]
             new_board[dst[0]][dst[1]] = 0
             self.board = new_board

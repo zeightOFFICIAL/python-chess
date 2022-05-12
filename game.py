@@ -126,8 +126,11 @@ def main():
                 bo.update_moves()
                 if margin_abs_half < pos[0] < width - margin_abs_half and margin_abs_half < pos[1] < width - margin_abs_half:
                     i, j = click(pos)
-                    change = bo.select(i, j, turn)
-                    bo.update_moves()
+                    try:
+                        change = bo.select(i, j, turn)
+                        bo.update_moves()
+                    except AttributeError:
+                        change = False
                     if change:
                         wide_timer = time.time()
                         if turn == "w":
