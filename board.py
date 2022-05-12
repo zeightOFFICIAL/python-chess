@@ -17,8 +17,8 @@ class Board:
         self.board[0][5] = Bishop(0, 5, "b")
         self.board[0][6] = Knight(0, 6, "b")
         self.board[0][7] = Rook(0, 7, "b")
-        #for line in range(0, 8):
-        #    self.board[1][line] = Pawn(1, line, "b")
+        for line in range(0, 8):
+            self.board[1][line] = Pawn(1, line, "b")
 
         self.board[7][0] = Rook(7, 0, "w")
         self.board[7][1] = Knight(7, 1, "w")
@@ -53,6 +53,22 @@ class Board:
                             danger_moves.append(move)
         return danger_moves
 
+    def is_attheend(self, color):
+        if color == "w":
+            i = 0
+            for j in range(0,8):
+                if self.board[i][j] !=0:
+                    if self.board[i][j].pawn:
+                        self.board[i][j] = 0
+                        self.board[i][j] = Queen(i, j, color)
+        if color == "b":
+            i = 7
+            for j in range(0,8):
+                if self.board[i][j] !=0:
+                    if self.board[i][j].pawn:
+                        self.board[i][j] = 0
+                        self.board[i][j] = Queen(i, j, color)
+
     def is_checked(self, color):
         self.update_moves()
         danger_moves = self.get_danger_moves(color)
@@ -65,6 +81,7 @@ class Board:
         if king_pos in danger_moves:
             return True
         return False
+
 
     def select(self, col, row, color):
         prev = (-1, -1)
@@ -115,7 +132,7 @@ class Board:
         new_board[dst[0]][dst[1]] = new_board[src[0]][src[1]]
         new_board[src[0]][src[1]] = 0
         self.board = new_board
-
+        self.is_attheend(color)
         if self.is_checked(color) and not (checked_before and self.is_checked(color)):
             print(self.is_checked(color), (checked_before and self.is_checked(color)))
             changed = False
