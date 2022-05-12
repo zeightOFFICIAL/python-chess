@@ -1,6 +1,7 @@
 # defaults
 fps_max = 24
 width = 750
+game_mod = 1
 padding_absolute = 130
 visual_set = 0
 time_restriction = 30

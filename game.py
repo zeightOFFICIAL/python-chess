@@ -4,7 +4,6 @@ import time
 
 # project libraries -----------------------------------------
 from board import Board
-from algorithm import estimate, suggestion, solution
 
 # resources -------------------------------------------------
 from flowingconfig import *
@@ -51,12 +50,9 @@ def redraw_gamewindow(win, bo, player1_time, player2_time, state_white, state_bl
 def end_screen(win, text, total_time):
     total_time = int(total_time)
     pygame.font.init()
-    font = pygame.font.SysFont("arial", 70)
-    font2 = pygame.font.SysFont("arial", 35)
-    font3 = pygame.font.SysFont("arial", 20)
-    font.set_bold(True)
-    font2.set_bold(True)
-    font3.set_bold(True)
+    font = pygame.font.SysFont("arial", 70, bold=True)
+    font2 = pygame.font.SysFont("arial", 35, bold=True)
+    font3 = pygame.font.SysFont("arial", 20, bold=True)
     txt = font.render(text, True, (255, 0, 0))
     txthelp = font3.render("Press q - to quit and r - to restart", True, (255, 255, 255))
     ftime = str(total_time//60)+":"+str(total_time%60)
@@ -86,6 +82,31 @@ def end_screen(win, text, total_time):
                     main()
 
 
+def start_screen(win):
+    pygame.font.init()
+    font4 = pygame.font.SysFont("arial", 30, bold=True)
+    font5 = pygame.font.SysFont("arial", 40, bold=True)
+    txt0 = font5.render("Hotkeys", True, (255, 0, 0))
+    txt1 = font4.render("q - to quit", True, (255,255, 255))
+    txt2 = font4.render("s - to surrender", True, (255, 255, 255))
+    txt3 = font4.render("p - to vote for draw", True, (255, 255, 255))
+    pygame.draw.rect(win, (0, 0, 0), (-1, -1, width + 1, width + 1))
+    win.blit(txt0, ((width - txt0.get_width()) / 2, width * 0.3))
+    win.blit(txt1, (width * 0.4, width * 0.4))
+    win.blit(txt2, (width * 0.4, width * 0.45))
+    win.blit(txt3, (width * 0.4, width * 0.5))
+    pygame.time.set_timer(pygame.USEREVENT + 1, 5500)
+    pygame.display.update()
+    run = True
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+                run = False
+            if event.type == pygame.USEREVENT + 1:
+                run = False
+
 def click(pos):
     x = pos[0]
     y = pos[1]
@@ -105,6 +126,7 @@ def main():
     wide_timer = time.time()
     start_time = time.time()
     turn = "w"
+    start_screen(win)
     bo = Board(8, 8)
     bo.update_moves()
     clock = pygame.time.Clock()
