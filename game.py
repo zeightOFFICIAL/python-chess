@@ -134,6 +134,7 @@ def main():
                     if change:
                         wide_timer = time.time()
                         if turn == "w":
+                            bo.reset_selected()
                             # print("log: time", time.time() - start_time)
                             if bo.is_checked("w") and statewhite == 1:
                                 end_screen(win, "Black Wins!", time.time() - start_time)
@@ -141,6 +142,7 @@ def main():
                                 end_screen(win, "White Wins!", time.time() - start_time)
                             turn = "b"
                         else:
+                            bo.reset_selected()
                             # print("log: time", time.time() - start_time)
                             if bo.is_checked("b") and stateblack == 1:
                                 end_screen(win, "White Wins!", time.time() - start_time)
