@@ -4,6 +4,7 @@ import time
 
 # project libraries -----------------------------------------
 from board import Board
+from algorithm import estimate, suggestion, solution
 
 # resources -------------------------------------------------
 from flowingconfig import *
@@ -13,30 +14,30 @@ board = pygame.transform.scale(raw_board, (width - padding_absolute, height - pa
 
 
 # functinos -------------------------------------------------
-def redraw_gamewindow(win, bo, p1time, p2time, statewhite, stateblack):
+def redraw_gamewindow(win, bo, player1_time, player2_time, state_white, state_black):
     pygame.font.init()
     pygame.draw.rect(win, (0, 0, 0), (0, 0, width, width))
     win.blit(board, (padding_abs_half, padding_abs_half))
     bo.draw(win)
     font = pygame.font.SysFont("console", 17)
     font2 = pygame.font.SysFont("console", 25)
-    f1time = str(p1time//60)+":"+str(p1time%60)
-    f2time = str(p2time//60)+":"+str(p2time%60)
-    if p1time % 60 < 10:
-        f1time = str(p1time // 60) + ":" + "0" + str(p1time % 60)
-    elif p1time % 60 == 0:
+    f1time = str(player1_time // 60) + ":" + str(player1_time % 60)
+    f2time = str(player2_time // 60) + ":" + str(player2_time % 60)
+    if player1_time % 60 < 10:
+        f1time = str(player1_time // 60) + ":" + "0" + str(player1_time % 60)
+    elif player1_time % 60 == 0:
         f1time += "0"
-    if p2time % 60 < 10:
-        f2time = str(p2time // 60) + ":" + "0" + str(p2time % 60)
-    elif p2time % 60 == 0:
+    if player2_time % 60 < 10:
+        f2time = str(player2_time // 60) + ":" + "0" + str(player2_time % 60)
+    elif player2_time % 60 == 0:
         f2time += "0"
     txttime1 = font.render("Player 1 Time: " + str(f1time), True, (255, 255, 255), (0, 0, 0))
     txttime2 = font.render("Player 2 Time: " + str(f2time), True, (255, 255, 255), (0, 0, 0))
-    if statewhite == 1:
+    if state_white == 1:
         txtstate1 = font2.render("White King is under check!", True, (255, 255, 255), (0, 0, 0))
     else:
         txtstate1 = font2.render("White King is under check!", True, (0, 0, 0), (0, 0, 0))
-    if stateblack == 1:
+    if state_black == 1:
         txtstate2 = font2.render("Black King is under check!", True, (255, 255, 255), (0, 0, 0))
     else:
         txtstate2 = font2.render("Black King is under check!", True, (0, 0, 0), (0, 0, 0))
@@ -48,25 +49,27 @@ def redraw_gamewindow(win, bo, p1time, p2time, statewhite, stateblack):
 
 
 def end_screen(win, text, total_time):
+    total_time = int(total_time)
     pygame.font.init()
     font = pygame.font.SysFont("arial", 70)
-    font.set_bold(True)
-    txt = font.render(text, True, (255, 0, 0))
-
     font2 = pygame.font.SysFont("arial", 35)
+    font3 = pygame.font.SysFont("arial", 20)
+    font.set_bold(True)
     font2.set_bold(True)
-    total_time = int(total_time)
+    font3.set_bold(True)
+    txt = font.render(text, True, (255, 0, 0))
+    txthelp = font3.render("Press q - to quit and r - to restart", True, (255, 255, 255))
     ftime = str(total_time//60)+":"+str(total_time%60)
     if total_time % 60 < 10:
         ftime = str(total_time // 60) + ":" + "0" + str(total_time % 60)
     elif total_time % 60 == 0:
         ftime += "0"
     txttime = font2.render(ftime, True, (255, 0, 0))
-
+    pygame.draw.rect(win, (0, 0, 0), (-1, width / 2 - txt.get_height(), width + 1, width - width/1.3))
     win.blit(txt, (width / 2 - txt.get_width() / 2, width / 2 - txt.get_height()))
     win.blit(txttime, (width / 2 - txttime.get_width() / 2, width / 2))
+    win.blit(txthelp, (width / 2 - txthelp.get_width() / 2, width / 2 + txttime.get_height()*1.2))
     pygame.display.update()
-    pygame.time.set_timer(pygame.USEREVENT+1, 3000)
     run = True
     while run:
         for event in pygame.event.get():
@@ -82,6 +85,7 @@ def end_screen(win, text, total_time):
                 if event.key == pygame.K_r:
                     main()
 
+
 def click(pos):
     x = pos[0]
     y = pos[1]
@@ -93,10 +97,11 @@ def click(pos):
             j = int(divy / (bottom_right_corner[1] / 8))
             return i, j
 
+
 # main ------------------------------------------------------
 def main():
-    p1time = time_restriction_seconds
-    p2time = time_restriction_seconds
+    player1_time = time_restriction_seconds
+    player2_time = time_restriction_seconds
     wide_timer = time.time()
     start_time = time.time()
     turn = "w"
@@ -111,15 +116,15 @@ def main():
     while run:
         clock.tick(fps_max)
         if turn == "w":
-            p1time -= (time.time() - wide_timer)
-            if p1time <= 0:
+            player1_time -= (time.time() - wide_timer)
+            if player1_time <= 0:
                 end_screen(win, "Black Wins!", time.time() - start_time)
         else:
-            p2time -= (time.time() - wide_timer)
-            if p2time <= 0:
+            player2_time -= (time.time() - wide_timer)
+            if player2_time <= 0:
                 end_screen(win, "White Wins!", time.time() - start_time)
         wide_timer = time.time()
-        redraw_gamewindow(win, bo, int(p1time), int(p2time), statewhite, stateblack)
+        redraw_gamewindow(win, bo, int(player1_time), int(player2_time), statewhite, stateblack)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False

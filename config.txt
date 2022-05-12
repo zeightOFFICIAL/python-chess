@@ -1,4 +1,5 @@
-fps_max=144
+game_mod=1
+fps_max=24
 width=750
 padding_absolute=130
 visual_set=0

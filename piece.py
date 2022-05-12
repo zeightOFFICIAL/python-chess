@@ -1,5 +1,4 @@
 import pygame
-import os
 
 # resources -------------------------------------------------
 from flowingconfig import *
@@ -17,24 +16,26 @@ w_queen = pygame.image.load("res/images/w_queen.png")
 w_rook = pygame.image.load("res/images/w_rook.png")
 raw_select = pygame.image.load("res/images/b_select.png")
 raw_select2 = pygame.image.load("res/images/b2_select.png")
-# -----------------------------------------------------------
 
 black_all = [b_bishop, b_king, b_knight, b_pawn, b_queen, b_rook]
 white_all = [w_bishop, w_king, w_knight, w_pawn, w_queen, w_rook]
 black_all_scaled = []
 white_all_scaled = []
 
-for img in black_all:
-    black_all_scaled.append(pygame.transform.smoothscale(img, (cell_size_x, cell_size_y)))
-for img in white_all:
-    white_all_scaled.append(pygame.transform.smoothscale(img, (cell_size_x, cell_size_y)))
+# scaling ---------------------------------------------------
+for piece_img in black_all:
+    black_all_scaled.append(pygame.transform.smoothscale(piece_img, (cell_size_x, cell_size_y)))
+for piece_img in white_all:
+    white_all_scaled.append(pygame.transform.smoothscale(piece_img, (cell_size_x, cell_size_y)))
 scaled_select = pygame.transform.smoothscale(raw_select, (cell_size_x, cell_size_y))
 scaled_select2 = pygame.transform.smoothscale(raw_select2, (cell_size_x, cell_size_y))
 
+
+# piece class -----------------------------------------------
 class Piece:
-    img = -1
-    startX = top_left_corner[0]
-    startY = top_left_corner[1]
+    piece_img = -1
+    start_x = top_left_corner[0]
+    start_y = top_left_corner[1]
 
     def __init__(self, row, col, color):
         self.row = row
@@ -46,9 +47,6 @@ class Piece:
         self.pawn = False
         self.queen = False
 
-    def move(self):
-        pass
-
     def is_selected(self):
         return self.selected
 
@@ -57,30 +55,32 @@ class Piece:
 
     def draw(self, win):
         if self.color == "w":
-            drawthis = white_all_scaled[self.img]
+            this_piece_img = white_all_scaled[self.piece_img]
         else:
-            drawthis = black_all_scaled[self.img]
+            this_piece_img = black_all_scaled[self.piece_img]
         if self.selected:
             moves = self.move_list
             for move in moves:
-                x = self.startX + (move[0] * bottom_right_corner[0] / 8) + (cell_size_y // 2)
-                y = self.startY + (move[1] * bottom_right_corner[1] / 8) + (cell_size_y // 2)
+                x = self.start_x + (move[0] * bottom_right_corner[0] / 8) + (cell_size_y // 2)
+                y = self.start_y + (move[1] * bottom_right_corner[1] / 8) + (cell_size_y // 2)
                 if self.color == "w":
                     win.blit(scaled_select, (x - cell_size_x / 2, y - cell_size_y / 2))
                 else:
                     win.blit(scaled_select2, (x - cell_size_x / 2, y - cell_size_y / 2))
-        x = self.startX + (self.col * bottom_right_corner[0] / 8)
-        y = self.startY + (self.row * bottom_right_corner[1] / 8)
+        x = self.start_x + (self.col * bottom_right_corner[0] / 8)
+        y = self.start_y + (self.row * bottom_right_corner[1] / 8)
         if self.selected:
             if self.color == "w":
-                drawthis = pygame.transform.smoothscale(white_all[self.img],
-                                                        (cell_size_y + pop_increasing_size, cell_size_y + pop_increasing_size))
+                this_piece_img = pygame.transform.smoothscale(white_all[self.piece_img],
+                                                              (cell_size_y + pop_increasing_size,
+                                                               cell_size_y + pop_increasing_size))
             else:
-                drawthis = pygame.transform.smoothscale(black_all[self.img],
-                                                        (cell_size_y + pop_increasing_size, cell_size_y + pop_increasing_size))
-            win.blit(drawthis, (x - pop_increasing_size / 2, y - pop_increasing_size / 2))
+                this_piece_img = pygame.transform.smoothscale(black_all[self.piece_img],
+                                                              (cell_size_y + pop_increasing_size,
+                                                               cell_size_y + pop_increasing_size))
+            win.blit(this_piece_img, (x - pop_increasing_size / 2, y - pop_increasing_size / 2))
         else:
-            win.blit(drawthis, (x, y))
+            win.blit(this_piece_img, (x, y))
 
     def change_pos(self, pos):
         self.row = pos[0]
@@ -91,76 +91,75 @@ class Piece:
 
 
 class Bishop(Piece):
-    img = 0
+    piece_img = 0
 
     def valid_moves(self, board):
         i = self.row
         j = self.col
         moves = []
-
         # TOP RIGHT
-        djL = j + 1
-        djR = j - 1
+        left_strafe = j + 1
+        right_strafe = j - 1
         for di in range(i - 1, -1, -1):
-            if djL < 8:
-                p = board[di][djL]
+            if left_strafe < 8:
+                p = board[di][left_strafe]
                 if p == 0:
-                    moves.append((djL, di))
+                    moves.append((left_strafe, di))
                 elif p.color != self.color:
-                    moves.append((djL, di))
+                    moves.append((left_strafe, di))
                     break
                 else:
                     break
             else:
                 break
-            djL += 1
+            left_strafe += 1
         for di in range(i - 1, -1, -1):
-            if djR > -1:
-                p = board[di][djR]
+            if right_strafe > -1:
+                p = board[di][right_strafe]
                 if p == 0:
-                    moves.append((djR, di))
+                    moves.append((right_strafe, di))
                 elif p.color != self.color:
-                    moves.append((djR, di))
+                    moves.append((right_strafe, di))
                     break
                 else:
                     break
             else:
                 break
-            djR -= 1
+            right_strafe -= 1
         # TOP LEFT
-        djL = j + 1
-        djR = j - 1
+        left_strafe = j + 1
+        right_strafe = j - 1
         for di in range(i + 1, 8):
-            if djL < 8:
-                p = board[di][djL]
+            if left_strafe < 8:
+                p = board[di][left_strafe]
                 if p == 0:
-                    moves.append((djL, di))
+                    moves.append((left_strafe, di))
                 elif p.color != self.color:
-                    moves.append((djL, di))
+                    moves.append((left_strafe, di))
                     break
                 else:
                     break
             else:
                 break
-            djL += 1
+            left_strafe += 1
         for di in range(i + 1, 8):
-            if djR > -1:
-                p = board[di][djR]
+            if right_strafe > -1:
+                p = board[di][right_strafe]
                 if p == 0:
-                    moves.append((djR, di))
+                    moves.append((right_strafe, di))
                 elif p.color != self.color:
-                    moves.append((djR, di))
+                    moves.append((right_strafe, di))
                     break
                 else:
                     break
             else:
                 break
-            djR -= 1
+            right_strafe -= 1
         return moves
 
 
 class King(Piece):
-    img = 1
+    piece_img = 1
 
     def __init__(self, row, col, color):
         super().__init__(row, col, color)
@@ -170,7 +169,6 @@ class King(Piece):
         i = self.row
         j = self.col
         moves = []
-
         if i > 0:
             # TOP LEFT
             if j > 0:
@@ -231,13 +229,12 @@ class King(Piece):
 
 
 class Knight(Piece):
-    img = 2
+    piece_img = 2
 
     def valid_moves(self, board):
         i = self.row
         j = self.col
         moves = []
-
         # DOWN LEFT
         if i < 6 and j > 0:
             p = board[i + 2][j - 1]
@@ -294,7 +291,7 @@ class Knight(Piece):
 
 
 class Pawn(Piece):
-    img = 3
+    piece_img = 3
 
     def __init__(self, row, col, color):
         super().__init__(row, col, color)
@@ -306,7 +303,6 @@ class Pawn(Piece):
         i = self.row
         j = self.col
         moves = []
-
         try:
             if self.color == "b":
                 if i < 7:
@@ -357,68 +353,68 @@ class Pawn(Piece):
                         elif p.color != self.color:
                             moves.append((j, i - 2))
         except:
+            print("local warning")
             pass
         return moves
 
 
 class Queen(Piece):
-    img = 4
+    piece_img = 4
 
     def valid_moves(self, board):
         i = self.row
         j = self.col
         moves = []
-
         # TOP RIGHT
-        djL = j + 1
-        djR = j - 1
+        left_strafe = j + 1
+        right_strafe = j - 1
         for di in range(i - 1, -1, -1):
-            if djL < 8:
-                p = board[di][djL]
+            if left_strafe < 8:
+                p = board[di][left_strafe]
                 if p == 0:
-                    moves.append((djL, di))
+                    moves.append((left_strafe, di))
                 elif p.color != self.color:
-                    moves.append((djL, di))
+                    moves.append((left_strafe, di))
                     break
                 else:
-                    djL = 9
-            djL += 1
+                    left_strafe = 9
+            left_strafe += 1
         for di in range(i - 1, -1, -1):
-            if djR > -1:
-                p = board[di][djR]
+            if right_strafe > -1:
+                p = board[di][right_strafe]
                 if p == 0:
-                    moves.append((djR, di))
+                    moves.append((right_strafe, di))
                 elif p.color != self.color:
-                    moves.append((djR, di))
+                    moves.append((right_strafe, di))
                     break
                 else:
-                    djR = -1
-            djR -= 1
+                    right_strafe = -1
+            right_strafe -= 1
         # TOP LEFT
-        djL = j + 1
-        djR = j - 1
+        left_strafe = j + 1
+        right_strafe = j - 1
         for di in range(i + 1, 8):
-            if djL < 8:
-                p = board[di][djL]
+            if left_strafe < 8:
+                p = board[di][left_strafe]
                 if p == 0:
-                    moves.append((djL, di))
+                    moves.append((left_strafe, di))
                 elif p.color != self.color:
-                    moves.append((djL, di))
+                    moves.append((left_strafe, di))
                     break
                 else:
-                    djL = 9
-            djL += 1
+                    left_strafe = 9
+            left_strafe += 1
         for di in range(i + 1, 8):
-            if djR > -1:
-                p = board[di][djR]
+            if right_strafe > -1:
+                p = board[di][right_strafe]
                 if p == 0:
-                    moves.append((djR, di))
+                    moves.append((right_strafe, di))
                 elif p.color != self.color:
-                    moves.append((djR, di))
+                    moves.append((right_strafe, di))
                     break
                 else:
-                    djR = -1
-            djR -= 1
+                    right_strafe = -1
+            right_strafe -= 1
         # UP
         for x in range(i - 1, -1, -1):
             p = board[x][j]
@@ -463,13 +459,12 @@ class Queen(Piece):
 
 
 class Rook(Piece):
-    img = 5
+    piece_img = 5
 
     def valid_moves(self, board):
         i = self.row
         j = self.col
         moves = []
-
         # UP
         for x in range(i - 1, -1, -1):
             p = board[x][j]
