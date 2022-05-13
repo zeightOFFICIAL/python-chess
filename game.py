@@ -1,4 +1,6 @@
 # python libraries ------------------------------------------
+import sys
+
 import pygame
 import time
 
@@ -71,13 +73,13 @@ def end_screen(win, text, total_time):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                quit()
                 run = False
+                sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
-                    run = False
-                    quit()
                     pygame.quit()
+                    run = False
+                    sys.exit()
                 if event.key == pygame.K_r:
                     main()
 
@@ -102,8 +104,8 @@ def start_screen(win):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                quit()
                 run = False
+                sys.exit()
             if event.type == pygame.USEREVENT + 1:
                 run = False
 
@@ -149,14 +151,14 @@ def main():
         redraw_gamewindow(win, bo, int(player1_time), int(player2_time), statewhite, stateblack)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                run = False
-                quit()
                 pygame.quit()
+                run = False
+                sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
-                    run = False
-                    quit()
                     pygame.quit()
+                    run = False
+                    sys.exit()
                 if event.key == pygame.K_s:
                     if turn == "w":
                         end_screen(win, "Black Wins!", time.time() - start_time)
