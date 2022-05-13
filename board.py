@@ -5,7 +5,7 @@ class Board:
     def __init__(self, rows, cols):
         self.rows = rows
         self.cols = cols
-        self.board = [[0 for x in range(8)] for y in range(8)]
+        self.board = [[0 for _ in range(8)] for _ in range(8)]
         self.set_start()
 
     def set_start(self):
@@ -43,6 +43,7 @@ class Board:
                 if self.board[i][j] != 0:
                     self.board[i][j].draw(win)
 
+
     def get_danger_moves(self, color):
         danger_moves = []
         for i in range(self.rows):
@@ -56,15 +57,15 @@ class Board:
     def is_attheend(self, color):
         if color == "w":
             i = 0
-            for j in range(0,8):
-                if self.board[i][j] !=0:
+            for j in range(0, 8):
+                if self.board[i][j] != 0:
                     if self.board[i][j].pawn:
                         self.board[i][j] = 0
                         self.board[i][j] = Queen(i, j, color)
         if color == "b":
             i = 7
-            for j in range(0,8):
-                if self.board[i][j] !=0:
+            for j in range(0, 8):
+                if self.board[i][j] != 0:
                     if self.board[i][j].pawn:
                         self.board[i][j] = 0
                         self.board[i][j] = Queen(i, j, color)
@@ -82,7 +83,6 @@ class Board:
             return True
         return False
 
-
     def select(self, col, row, color):
         prev = (-1, -1)
         changed = False
@@ -98,7 +98,7 @@ class Board:
                 changed = self.move(prev, (row, col), color)
             self.reset_selected()
         else:
-            if prev == (-1 ,-1):
+            if prev == (-1, -1):
                 self.reset_selected()
                 if self.board[row][col] != 0 and self.board[row][col].color == color:
                     self.board[row][col].selected = True

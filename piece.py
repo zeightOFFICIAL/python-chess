@@ -65,7 +65,7 @@ class Piece:
                 y = self.start_y + (move[1] * bottom_right_corner[1] / 8) + (cell_size_y // 2)
                 if self.color == "w":
                     win.blit(scaled_select, (x - cell_size_x / 2, y - cell_size_y / 2))
-                else:
+                if self.color == 'b':
                     win.blit(scaled_select2, (x - cell_size_x / 2, y - cell_size_y / 2))
         x = self.start_x + (self.col * bottom_right_corner[0] / 8)
         y = self.start_y + (self.row * bottom_right_corner[1] / 8)
@@ -74,7 +74,7 @@ class Piece:
                 this_piece_img = pygame.transform.smoothscale(white_all[self.piece_img],
                                                               (cell_size_y + pop_increasing_size,
                                                                cell_size_y + pop_increasing_size))
-            else:
+            if self.color == 'b':
                 this_piece_img = pygame.transform.smoothscale(black_all[self.piece_img],
                                                               (cell_size_y + pop_increasing_size,
                                                                cell_size_y + pop_increasing_size))
@@ -353,7 +353,6 @@ class Pawn(Piece):
                         elif p.color != self.color:
                             moves.append((j, i - 2))
         except:
-            print("local warning")
             pass
         return moves
 

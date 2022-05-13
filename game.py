@@ -1,6 +1,5 @@
 # python libraries ------------------------------------------
 import sys
-
 import pygame
 import time
 
@@ -14,14 +13,14 @@ icon = pygame.image.load("res/images/icon.png")
 board = pygame.transform.scale(raw_board, (width - padding_absolute, height - padding_absolute))
 
 
-# functinos -------------------------------------------------
-def redraw_gamewindow(win, bo, player1_time, player2_time, state_white, state_black):
+# functions -------------------------------------------------
+def redraw_gamewindow(bo, player1_time, player2_time, state_white, state_black):
     pygame.font.init()
     pygame.draw.rect(win, (0, 0, 0), (0, 0, width, width))
-    win.blit(board, (padding_abs_half, padding_abs_half))
-    bo.draw(win)
     font = pygame.font.SysFont("console", 17)
     font2 = pygame.font.SysFont("console", 25)
+    win.blit(board, (padding_abs_half, padding_abs_half))
+    bo.draw(win)
     f1time = str(player1_time // 60) + ":" + str(player1_time % 60)
     f2time = str(player2_time // 60) + ":" + str(player2_time % 60)
     if player1_time % 60 < 10:
@@ -42,14 +41,16 @@ def redraw_gamewindow(win, bo, player1_time, player2_time, state_white, state_bl
         txtstate2 = font2.render("Black King is under check!", True, (255, 255, 255), (0, 0, 0))
     else:
         txtstate2 = font2.render("Black King is under check!", True, (0, 0, 0), (0, 0, 0))
-    win.blit(txttime1, (width - padding_abs_half - txttime1.get_width(), width - padding_abs_half + txttime1.get_height()))
+    win.blit(txttime1, (width - padding_abs_half - txttime1.get_width(),
+                        width - padding_abs_half + txttime1.get_height()))
     win.blit(txttime2, (padding_abs_half, padding_abs_half - txttime2.get_height() * 2))
     win.blit(txtstate1, (padding_abs_half, width - padding_abs_half / 1.5))
-    win.blit(txtstate2, (width - padding_abs_half - txtstate2.get_width(), padding_abs_half - txtstate2.get_height() * 1.5))
+    win.blit(txtstate2, (width - padding_abs_half - txtstate2.get_width(),
+                         padding_abs_half - txtstate2.get_height() * 1.5))
     pygame.display.update()
 
 
-def end_screen(win, text, total_time):
+def end_screen(text, total_time):
     total_time = int(total_time)
     pygame.font.init()
     font = pygame.font.SysFont("arial", 70, bold=True)
@@ -57,7 +58,7 @@ def end_screen(win, text, total_time):
     font3 = pygame.font.SysFont("arial", 20, bold=True)
     txt = font.render(text, True, (255, 0, 0))
     txthelp = font3.render("Press q - to quit and r - to restart", True, (255, 255, 255))
-    ftime = str(total_time//60)+":"+str(total_time%60)
+    ftime = str(total_time // 60) + ":" + str(total_time % 60)
     if total_time % 60 < 10:
         ftime = str(total_time // 60) + ":" + "0" + str(total_time % 60)
     elif total_time % 60 == 0:
@@ -84,12 +85,12 @@ def end_screen(win, text, total_time):
                     main()
 
 
-def start_screen(win):
+def start_screen():
     pygame.font.init()
     font4 = pygame.font.SysFont("arial", 30, bold=True)
     font5 = pygame.font.SysFont("arial", 40, bold=True)
     txt0 = font5.render("Hotkeys", True, (255, 0, 0))
-    txt1 = font4.render("q - to quit", True, (255,255, 255))
+    txt1 = font4.render("q - to quit", True, (255, 255, 255))
     txt2 = font4.render("s - to surrender", True, (255, 255, 255))
     txt3 = font4.render("p - to vote for draw", True, (255, 255, 255))
     pygame.draw.rect(win, (0, 0, 0), (-1, -1, width + 1, width + 1))
@@ -108,6 +109,7 @@ def start_screen(win):
                 sys.exit()
             if event.type == pygame.USEREVENT + 1:
                 run = False
+
 
 def click(pos):
     x = pos[0]
@@ -128,7 +130,6 @@ def main():
     wide_timer = time.time()
     start_time = time.time()
     turn = "w"
-    start_screen(win)
     bo = Board(8, 8)
     bo.update_moves()
     clock = pygame.time.Clock()
@@ -142,13 +143,13 @@ def main():
         if turn == "w":
             player1_time -= (time.time() - wide_timer)
             if player1_time <= 0:
-                end_screen(win, "Black Wins!", time.time() - start_time)
+                end_screen("Black Wins!", time.time() - start_time)
         else:
             player2_time -= (time.time() - wide_timer)
             if player2_time <= 0:
-                end_screen(win, "White Wins!", time.time() - start_time)
+                end_screen("White Wins!", time.time() - start_time)
         wide_timer = time.time()
-        redraw_gamewindow(win, bo, int(player1_time), int(player2_time), statewhite, stateblack)
+        redraw_gamewindow(bo, int(player1_time), int(player2_time), statewhite, stateblack)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -161,21 +162,22 @@ def main():
                     sys.exit()
                 if event.key == pygame.K_s:
                     if turn == "w":
-                        end_screen(win, "Black Wins!", time.time() - start_time)
+                        end_screen("Black Wins!", time.time() - start_time)
                     else:
-                        end_screen(win, "White Wins!", time.time() - start_time)
+                        end_screen("White Wins!", time.time() - start_time)
                 if event.key == pygame.K_p:
                     if turn == "w":
                         count_white = 1
                     if turn == "b":
                         count_black = 1
                     if count_black and count_white:
-                        end_screen(win, "Draw!", time.time() - start_time)
+                        end_screen("Draw!", time.time() - start_time)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 bo.update_moves()
-                if padding_abs_half < pos[0] < width - padding_abs_half and padding_abs_half < pos[1] < width - padding_abs_half:
+                if padding_abs_half < pos[0] < width - padding_abs_half \
+                        and padding_abs_half < pos[1] < width - padding_abs_half:
                     i, j = click(pos)
                     try:
                         change = bo.select(i, j, turn)
@@ -188,17 +190,17 @@ def main():
                             bo.reset_selected()
                             # print("log: time", time.time() - start_time)
                             if bo.is_checked("w") and statewhite == 1:
-                                end_screen(win, "Black Wins!", time.time() - start_time)
+                                end_screen("Black Wins!", time.time() - start_time)
                             if bo.is_checked("b") and stateblack == 1:
-                                end_screen(win, "White Wins!", time.time() - start_time)
+                                end_screen("White Wins!", time.time() - start_time)
                             turn = "b"
                         else:
                             bo.reset_selected()
                             # print("log: time", time.time() - start_time)
                             if bo.is_checked("b") and stateblack == 1:
-                                end_screen(win, "White Wins!", time.time() - start_time)
+                                end_screen("White Wins!", time.time() - start_time)
                             if bo.is_checked("w") and statewhite == 1:
-                                end_screen(win, "Black Wins!", time.time() - start_time)
+                                end_screen("Black Wins!", time.time() - start_time)
                             turn = "w"
 
                 if bo.is_checked("w"):
@@ -216,4 +218,5 @@ def main():
 win = pygame.display.set_mode((width, height), vsync=True)
 pygame.display.set_caption("PyChess")
 pygame.display.set_icon(icon)
+start_screen()
 main()
