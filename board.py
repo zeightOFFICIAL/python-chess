@@ -43,7 +43,6 @@ class Board:
                 if self.board[i][j] != 0:
                     self.board[i][j].draw(win)
 
-
     def get_danger_moves(self, color):
         danger_moves = []
         for i in range(self.rows):

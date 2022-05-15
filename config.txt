@@ -1,6 +1,8 @@
-game_mod=1
+game_mode=1
+difficulty=0
 fps_max=24
 width=750
 padding_absolute=130
 visual_set=0
 time_restriction=45
+freeze_time=0

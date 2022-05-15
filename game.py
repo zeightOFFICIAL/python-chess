@@ -5,6 +5,7 @@ import time
 
 # project libraries -----------------------------------------
 from board import Board
+from algorithm import Solution
 
 # resources -------------------------------------------------
 from flowingconfig import *
@@ -51,19 +52,19 @@ def redraw_gamewindow(bo, player1_time, player2_time, state_white, state_black):
 
 
 def end_screen(text, total_time):
-    total_time = int(total_time)
     pygame.font.init()
-    font = pygame.font.SysFont("arial", 70, bold=True)
-    font2 = pygame.font.SysFont("arial", 35, bold=True)
-    font3 = pygame.font.SysFont("arial", 20, bold=True)
-    txt = font.render(text, True, (255, 0, 0))
-    txthelp = font3.render("Press q - to quit and r - to restart", True, (255, 255, 255))
+    total_time = int(total_time)
     ftime = str(total_time // 60) + ":" + str(total_time % 60)
     if total_time % 60 < 10:
         ftime = str(total_time // 60) + ":" + "0" + str(total_time % 60)
     elif total_time % 60 == 0:
         ftime += "0"
+    font = pygame.font.SysFont("arial", 70, bold=True)
+    font2 = pygame.font.SysFont("arial", 35, bold=True)
+    font3 = pygame.font.SysFont("arial", 20, bold=True)
+    txt = font.render(text, True, (255, 0, 0))
     txttime = font2.render(ftime, True, (255, 0, 0))
+    txthelp = font3.render("Press q - to quit and r - to restart", True, (255, 255, 255))
     pygame.draw.rect(win, (0, 0, 0), (-1, width / 2 - txt.get_height(), width + 1, width - width/1.3))
     win.blit(txt, (width / 2 - txt.get_width() / 2, width / 2 - txt.get_height()))
     win.blit(txttime, (width / 2 - txttime.get_width() / 2, width / 2))
@@ -98,7 +99,7 @@ def start_screen():
     win.blit(txt1, (width * 0.4, width * 0.4))
     win.blit(txt2, (width * 0.4, width * 0.45))
     win.blit(txt3, (width * 0.4, width * 0.5))
-    pygame.time.set_timer(pygame.USEREVENT + 1, 5500)
+    pygame.time.set_timer(pygame.USEREVENT + 1, freeze_time * 1000 + 1)
     pygame.display.update()
     run = True
     while run:
@@ -172,7 +173,28 @@ def main():
                         count_black = 1
                     if count_black and count_white:
                         end_screen("Draw!", time.time() - start_time)
-
+            if turn == "w" and game_mode == 1:
+                solve = Solution(bo)
+                piecex, piecey, choice = solve.random_choice()
+                bo.move((piecey, piecex), (choice[1], choice[0]), "w")
+                bo.update_moves()
+                change = True
+                if change:
+                    wide_timer = time.time()
+                    if turn == "w":
+                        bo.reset_selected()
+                        if bo.is_checked("w") and statewhite == 1:
+                            end_screen("Black Wins!", time.time() - start_time)
+                        if bo.is_checked("b") and stateblack == 1:
+                            end_screen("White Wins!", time.time() - start_time)
+                        turn = "b"
+                    else:
+                        bo.reset_selected()
+                        if bo.is_checked("b") and stateblack == 1:
+                            end_screen("White Wins!", time.time() - start_time)
+                        if bo.is_checked("w") and statewhite == 1:
+                            end_screen("Black Wins!", time.time() - start_time)
+                        turn = "w"
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 bo.update_moves()
@@ -188,7 +210,6 @@ def main():
                         wide_timer = time.time()
                         if turn == "w":
                             bo.reset_selected()
-                            # print("log: time", time.time() - start_time)
                             if bo.is_checked("w") and statewhite == 1:
                                 end_screen("Black Wins!", time.time() - start_time)
                             if bo.is_checked("b") and stateblack == 1:
@@ -196,20 +217,16 @@ def main():
                             turn = "b"
                         else:
                             bo.reset_selected()
-                            # print("log: time", time.time() - start_time)
                             if bo.is_checked("b") and stateblack == 1:
                                 end_screen("White Wins!", time.time() - start_time)
                             if bo.is_checked("w") and statewhite == 1:
                                 end_screen("Black Wins!", time.time() - start_time)
                             turn = "w"
-
                 if bo.is_checked("w"):
-                    # print("log: White check")
                     statewhite = 1
                 else:
                     statewhite = 0
                 if bo.is_checked("b"):
-                    # print("log: Black check")
                     stateblack = 1
                 else:
                     stateblack = 0
