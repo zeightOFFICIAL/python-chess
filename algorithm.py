@@ -1,13 +1,12 @@
 from random import choice
 from board import Board
 from math import inf
-import copy
+import chess
 
 
 class Solution:
     def __init__(self, board):
         self.bo = board
-        self.figure = None
         self.board_estimated = [[0 for _ in range(8)] for _ in range(8)]
 
     def random_choice(self):
@@ -17,14 +16,12 @@ class Solution:
                 if self.bo.board[row][col] != 0:
                     if self.bo.board[row][col].color == "b":
                         all_pieces.append(self.bo.board[row][col])
-        random_piece = choice(all_pieces)
-        self.figure = self.bo.board[random_piece.row][random_piece.col]
         while True:
             random_piece = choice(all_pieces)
-            self.figure = self.bo.board[random_piece.row][random_piece.col]
-            if len(self.figure.move_list) > 0:
+            if len(random_piece.move_list) > 0:
+                random_move = choice(random_piece.move_list)
+                random_move = ((random_piece.row, random_piece.col), (random_move[0], random_move[1]))
                 break
-        random_move = (random_piece.row, random_piece.col, (choice(self.figure.move_list)[1], choice(self.figure.move_list)[0]))
         return random_move
 
     def tier3_choice(self):
@@ -37,57 +34,47 @@ class Solution:
                     for move in self.bo.board[row][col].move_list:
                         if self.board_estimated[move[1]][move[0]] >= best_value:
                             best_value = self.board_estimated[move[1]][move[0]]
-                            best_move = (row, col, (move[1], move[0]))
+                            best_move = ((row, col), (move[0], move[1]))
                         if self.bo.is_checked("b"):
                             self.bo.simple_move((row, col), (move[1], move[0]), "b")
                             if not self.bo.is_checked("b"):
-                                best_move = (row, col, (move[1], move[0]))
+                                best_move = ((row, col), (move[0], move[1]))
                                 self.bo.simple_move((move[1], move[0]), (row, col), "b")
                                 return best_move
                             self.bo.simple_move((move[1], move[0]), (row, col), "b")
         return best_move
 
-    def tier2_choice(self):
-        def minimax(board, depth, alpha, beta, maximizing):
-            if depth == 0:
-                return None, outer_board_estimation(board)[1]
+    """def tier2_choice(self):
+        def minimax(board):
             best_move_minmax = self.random_choice()
+            max_value = -inf
+            min_value = inf
             board.update_moves()
-            if maximizing:
-                max_value = -inf
-                moves = get_all_moves(board, "b")
-                for move in moves:
-                    new_board = board
-                    board.simple_move((move[0][0], move[0][1]), (move[1][1], move[1][0]), "b")
-                    current_value = minimax(board, depth - 1, alpha, beta, False)[1]
-                    #board.simple_move((move[1][0], move[1][1]), (move[0][1], move[0][0]), "b")
-                    board = new_board
-                    if current_value > max_value:
-                        max_value = current_value
-                        best_move_minmax = (move[0][0], move[0][1], (move[1][0], move[1][1]))
-                    alpha = max(alpha, current_value)
-                    if beta <= alpha:
-                        break
-                return best_move_minmax, max_value
-            else:
-                min_value = inf
-                moves = get_all_moves(board, "w")
-                for move in moves:
-                    new_board = board
-                    board.simple_move((move[0][0], move[0][1]), (move[1][1], move[1][0]), "w")
-                    current_value = minimax(board, depth - 1, alpha, beta, True)[1]
-                    #board.simple_move((move[1][1], move[1][0]), (move[0][0], move[0][1]), "b")
-                    board = new_board
-                    if current_value < min_value:
-                        min_value = current_value
-                        print()
-                        best_move_minmax = (move[0][0], move[0][1], (move[1][1], move[1][0]))
-                    beta = min(beta, current_value)
-                    if beta <= alpha:
-                        break
-                return best_move_minmax, min_value
-        best_move, best_value = minimax(copy.deepcopy(self.bo), 3, inf, -inf, True)
-        return best_move
+            max_moves = get_all_moves(board, "b")
+            for move in max_moves:
+                board.simple_move((move[0][0], move[0][1]), (move[1][1], move[1][0]), "b")
+                value = 0
+                transfer_board = copy.deepcopy(board)
+                transfer_board.update_moves()
+                min_moves = get_all_moves(transfer_board, "w")
+                print(move)
+                for move_2 in min_moves:
+                    if transfer_board.board[move_2[0][0]][move_2[0][1]] != 0:
+                        transfer_board.simple_move((move_2[0][0], move_2[0][1]), (move_2[1][1], move_2[1][0]), "w")
+                        value = outer_board_estimation(transfer_board)[1]
+                        transfer_board = copy.deepcopy(board)
+                        if value < min_value:
+                            min_value = value
+                            best_move_minmax = move_2
+                board = copy.deepcopy(self.bo)
+                if value > max_value:
+                    max_value = value
+                    best_move_minmax = move
+            return best_move_minmax
+
+        best_move = minimax(copy.deepcopy(self.bo))
+        # = self.random_choice()
+        return best_move"""
 
 
 def get_all_moves(board, color):
@@ -96,7 +83,7 @@ def get_all_moves(board, color):
         for col in range(0, 8):
             if board.board[row][col] != 0 and board.board[row][col].color == color:
                 for move in board.board[row][col].move_list:
-                    all_moves.append(((row, col), (move[0], move[1])))
+                    all_moves.append(((row, col), (move[1], move[0])))
     return all_moves
 
 
@@ -146,3 +133,9 @@ def outer_board_estimation(board):
                         board_estimated[row][col] = -900
                         black_score += 900
     return board_estimated, black_score - white_score
+
+def convertboard(board):
+    count_spaces = 0
+    for row in range(0, 8):
+        for col in range(0, 8):
+            if

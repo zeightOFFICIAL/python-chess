@@ -175,33 +175,27 @@ def main():
                     if count_black and count_white:
                         end_screen("Draw!", time.time() - start_time)
             if turn == "b" and game_mode == 1:
+                bo.update_moves()
                 solve = Solution(bo)
-                piecex, piecey, choice = solve.random_choice()
+                (piecex, piecey), choice = solve.random_choice()
                 if difficulty == 1:
-                    piecex, piecey, choice = solve.tier3_choice()
+                    (piecex, piecey), choice = solve.tier3_choice()
                 elif difficulty == 2:
-                    piecex, piecey, choice = solve.tier2_choice()
+                    (piecex, piecey), choice = solve.tier2_choice()
                 elif difficulty == 3:
                     pass
-                bo.simple_move((piecex, piecey), (choice[0], choice[1]), "b")
+                bo.move((piecex, piecey), (choice[1], choice[0]), "b")
                 bo.update_moves()
                 change = True
                 if change:
                     wide_timer = time.time()
-                    if turn == "w":
-                        bo.reset_selected()
-                        if bo.is_checked("w") and statewhite == 1:
-                            end_screen("Black Wins!", time.time() - start_time)
-                        if bo.is_checked("b") and stateblack == 1:
-                            end_screen("White Wins!", time.time() - start_time)
-                        turn = "b"
-                    else:
-                        bo.reset_selected()
-                        if bo.is_checked("b") and stateblack == 1:
-                            end_screen("White Wins!", time.time() - start_time)
-                        if bo.is_checked("w") and statewhite == 1:
-                            end_screen("Black Wins!", time.time() - start_time)
-                        turn = "w"
+                    bo.reset_selected()
+                    if bo.is_checked("b") and stateblack == 1:
+                        end_screen("White Wins!", time.time() - start_time)
+                    if bo.is_checked("w") and statewhite == 1:
+                        end_screen("Black Wins!", time.time() - start_time)
+                    turn = "w"
+                continue
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 bo.update_moves()

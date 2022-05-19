@@ -326,7 +326,7 @@ class Pawn(Piece):
                         p1 = board[i + 1][j]
                         if p1 == 0:
                             moves.append((j, i + 1))
-                        if p == 0:
+                        if p == 0 and p1 == 0:
                             moves.append((j, i + 2))
             # WHITE
             else:
@@ -350,7 +350,7 @@ class Pawn(Piece):
                         p1 = board[i - 1][j]
                         if p1 == 0:
                             moves.append((j, i - 1))
-                        if p == 0:
+                        if p == 0 and p1 == 0:
                             moves.append((j, i - 2))
         except:
             pass
