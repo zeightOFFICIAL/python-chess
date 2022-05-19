@@ -98,7 +98,8 @@ def start_screen():
     win.blit(txt0, ((width - txt0.get_width()) / 2, width * 0.3))
     win.blit(txt1, (width * 0.4, width * 0.4))
     win.blit(txt2, (width * 0.4, width * 0.45))
-    win.blit(txt3, (width * 0.4, width * 0.5))
+    if game_mode != 1:
+        win.blit(txt3, (width * 0.4, width * 0.5))
     pygame.time.set_timer(pygame.USEREVENT + 1, freeze_time * 1000 + 1)
     pygame.display.update()
     run = True
@@ -173,10 +174,16 @@ def main():
                         count_black = 1
                     if count_black and count_white:
                         end_screen("Draw!", time.time() - start_time)
-            if turn == "w" and game_mode == 1:
+            if turn == "b" and game_mode == 1:
                 solve = Solution(bo)
                 piecex, piecey, choice = solve.random_choice()
-                bo.move((piecey, piecex), (choice[1], choice[0]), "w")
+                if difficulty == 1:
+                    piecex, piecey, choice = solve.tier3_choice()
+                elif difficulty == 2:
+                    piecex, piecey, choice = solve.tier2_choice()
+                elif difficulty == 3:
+                    pass
+                bo.move((piecex, piecey), (choice[0], choice[1]), "b")
                 bo.update_moves()
                 change = True
                 if change:
