@@ -17,8 +17,8 @@ class Board:
         self.board[0][5] = Bishop(0, 5, "b")
         self.board[0][6] = Knight(0, 6, "b")
         self.board[0][7] = Rook(0, 7, "b")
-        for line in range(0, 8):
-            self.board[1][line] = Pawn(1, line, "b")
+        #for line in range(0, 8):
+        #    self.board[1][line] = Pawn(1, line, "b")
 
         self.board[7][0] = Rook(7, 0, "w")
         self.board[7][1] = Knight(7, 1, "w")
@@ -133,7 +133,6 @@ class Board:
         self.board = new_board
         self.is_attheend(color)
         if self.is_checked(color) and not (checked_before and self.is_checked(color)):
-            print(self.is_checked(color), (checked_before and self.is_checked(color)))
             changed = False
             new_board = self.board[:]
             new_board[dst[0]][dst[1]].change_pos((src[0], src[1]))

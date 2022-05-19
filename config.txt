@@ -4,5 +4,5 @@ fps_max=36
 width=750
 padding_absolute=130
 visual_set=0
-time_restriction=45
+time_restriction=30
 freeze_time=0

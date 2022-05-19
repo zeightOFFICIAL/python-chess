@@ -8,20 +8,7 @@ class Solution:
     def __init__(self, board):
         self.bo = board
         self.figure = None
-        self.rgmove = None
-        self.amoves = []
         self.board_estimated = [[0 for _ in range(8)] for _ in range(8)]
-
-        self.w_pawn = 0
-        self.b_pawn = 0
-        self.w_knight = 0
-        self.b_knight = 0
-        self.w_bishop = 0
-        self.b_bishop = 0
-        self.w_rook = 0
-        self.b_rook = 0
-        self.w_queen = 0
-        self.b_queen = 0
 
     def random_choice(self):
         all_pieces = []
@@ -41,7 +28,7 @@ class Solution:
         return random_move
 
     def tier3_choice(self):
-        best_value = -1
+        best_value = -inf
         self.board_estimated = outer_board_estimation(self.bo)[0]
         best_move = self.random_choice()
         for row in range(0, 8):
@@ -51,53 +38,66 @@ class Solution:
                         if self.board_estimated[move[1]][move[0]] >= best_value:
                             best_value = self.board_estimated[move[1]][move[0]]
                             best_move = (row, col, (move[1], move[0]))
+                        if self.bo.is_checked("b"):
+                            self.bo.simple_move((row, col), (move[1], move[0]), "b")
+                            if not self.bo.is_checked("b"):
+                                best_move = (row, col, (move[1], move[0]))
+                                self.bo.simple_move((move[1], move[0]), (row, col), "b")
+                                return best_move
+                            self.bo.simple_move((move[1], move[0]), (row, col), "b")
         return best_move
 
     def tier2_choice(self):
-        def minimax(board, depth, alpha, beta, maximazing):
+        def minimax(board, depth, alpha, beta, maximizing):
             if depth == 0:
-                return None, outer_board_estimation(board)[2]
-            minimax_best_move = self.random_choice()
-            if maximazing:
+                return None, outer_board_estimation(board)[1]
+            best_move_minmax = self.random_choice()
+            board.update_moves()
+            if maximizing:
                 max_value = -inf
-                for row1 in range(0, 8):
-                    for col1 in range(0, 8):
-                        board.update_moves()
-                        if board.board[row1][col1] != 0 and board.board[row1][col1].color == "b":
-                            for move in board.board[row1][col1].move_list:
-                                print(board.board[row1][col1].move_list)
-                                board.simple_move((row1, col1), (move[1], move[0]), "b")
-                                current_eval = minimax(board, depth - 1, alpha, beta, False)[1]
-                                board.simple_move((move[1], move[0]), (row1, col1), "b")
-                                board.update_moves()
-                                if current_eval > max_value:
-                                    max_value = current_eval
-                                    minimax_best_move = (row1, col1, (move[1], move[0]))
-                                alpha = max(alpha, current_eval)
-                                if beta <= alpha:
-                                    break
-                        return minimax_best_move, max_value
+                moves = get_all_moves(board, "b")
+                for move in moves:
+                    new_board = board
+                    board.simple_move((move[0][0], move[0][1]), (move[1][1], move[1][0]), "b")
+                    current_value = minimax(board, depth - 1, alpha, beta, False)[1]
+                    #board.simple_move((move[1][0], move[1][1]), (move[0][1], move[0][0]), "b")
+                    board = new_board
+                    if current_value > max_value:
+                        max_value = current_value
+                        best_move_minmax = (move[0][0], move[0][1], (move[1][0], move[1][1]))
+                    alpha = max(alpha, current_value)
+                    if beta <= alpha:
+                        break
+                return best_move_minmax, max_value
             else:
                 min_value = inf
-                for row2 in range(0, 8):
-                    for col2 in range(0, 8):
-                        board.update_moves()
-                        if board.board[row2][col2] != 0 and board.board[row2][col2].color == "w":
-                            for move2 in board.board[row2][col2].move_list:
-                                board.simple_move((row2, col2), (move2[1], move2[0]), "w")
-                                current_eval = minimax(board, depth - 1, alpha, beta, True)[1]
-                                board.simple_move((move2[1], move2[0]), (row2, col2), "w")
-                                board.update_moves()
-                                if current_eval < min_value:
-                                    min_value = current_eval
-                                    minimax_best_move = (row2, col2, (move2[1], move2[0]))
-                                beta = min(beta, current_eval)
-                                if beta <= alpha:
-                                    break
-                        return minimax_best_move, min_value
-        board_copy = copy.deepcopy(self.bo)
-        best_move, best_value = minimax(self.bo, 3, inf, -inf, True)
+                moves = get_all_moves(board, "w")
+                for move in moves:
+                    new_board = board
+                    board.simple_move((move[0][0], move[0][1]), (move[1][1], move[1][0]), "w")
+                    current_value = minimax(board, depth - 1, alpha, beta, True)[1]
+                    #board.simple_move((move[1][1], move[1][0]), (move[0][0], move[0][1]), "b")
+                    board = new_board
+                    if current_value < min_value:
+                        min_value = current_value
+                        print()
+                        best_move_minmax = (move[0][0], move[0][1], (move[1][1], move[1][0]))
+                    beta = min(beta, current_value)
+                    if beta <= alpha:
+                        break
+                return best_move_minmax, min_value
+        best_move, best_value = minimax(copy.deepcopy(self.bo), 3, inf, -inf, True)
         return best_move
+
+
+def get_all_moves(board, color):
+    all_moves = []
+    for row in range(0, 8):
+        for col in range(0, 8):
+            if board.board[row][col] != 0 and board.board[row][col].color == color:
+                for move in board.board[row][col].move_list:
+                    all_moves.append(((row, col), (move[0], move[1])))
+    return all_moves
 
 
 def outer_board_estimation(board):
@@ -145,4 +145,4 @@ def outer_board_estimation(board):
                     elif board.board[row][col].__class__.__name__ == "King":
                         board_estimated[row][col] = -900
                         black_score += 900
-    return board_estimated, white_score, black_score
+    return board_estimated, black_score - white_score

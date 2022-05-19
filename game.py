@@ -183,7 +183,7 @@ def main():
                     piecex, piecey, choice = solve.tier2_choice()
                 elif difficulty == 3:
                     pass
-                bo.move((piecex, piecey), (choice[0], choice[1]), "b")
+                bo.simple_move((piecex, piecey), (choice[0], choice[1]), "b")
                 bo.update_moves()
                 change = True
                 if change:
