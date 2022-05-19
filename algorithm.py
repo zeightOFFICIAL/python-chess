@@ -1,62 +1,7 @@
 from random import choice
 from board import Board
+from math import inf
 import copy
-
-pawntable = [
-    0, 0, 0, 0, 0, 0, 0, 0,
-    5, 10, 10, -20, -20, 10, 10, 5,
-    5, -5, -10, 0, 0, -10, -5, 5,
-    0, 0, 0, 20, 20, 0, 0, 0,
-    5, 5, 10, 25, 25, 10, 5, 5,
-    10, 10, 20, 30, 30, 20, 10, 10,
-    50, 50, 50, 50, 50, 50, 50, 50,
-    0, 0, 0, 0, 0, 0, 0, 0]
-
-knightstable = [
-    -50, -40, -30, -30, -30, -30, -40, -50,
-    -40, -20, 0, 5, 5, 0, -20, -40,
-    -30, 5, 10, 15, 15, 10, 5, -30,
-    -30, 0, 15, 20, 20, 15, 0, -30,
-    -30, 5, 15, 20, 20, 15, 5, -30,
-    -30, 0, 10, 15, 15, 10, 0, -30,
-    -40, -20, 0, 0, 0, 0, -20, -40,
-    -50, -40, -30, -30, -30, -30, -40, -50]
-bishopstable = [
-    -20, -10, -10, -10, -10, -10, -10, -20,
-    -10, 5, 0, 0, 0, 0, 5, -10,
-    -10, 10, 10, 10, 10, 10, 10, -10,
-    -10, 0, 10, 10, 10, 10, 0, -10,
-    -10, 5, 5, 10, 10, 5, 5, -10,
-    -10, 0, 5, 10, 10, 5, 0, -10,
-    -10, 0, 0, 0, 0, 0, 0, -10,
-    -20, -10, -10, -10, -10, -10, -10, -20]
-rookstable = [
-    0, 0, 0, 5, 5, 0, 0, 0,
-    -5, 0, 0, 0, 0, 0, 0, -5,
-    -5, 0, 0, 0, 0, 0, 0, -5,
-    -5, 0, 0, 0, 0, 0, 0, -5,
-    -5, 0, 0, 0, 0, 0, 0, -5,
-    -5, 0, 0, 0, 0, 0, 0, -5,
-    5, 10, 10, 10, 10, 10, 10, 5,
-    0, 0, 0, 0, 0, 0, 0, 0]
-queenstable = [
-    -20, -10, -10, -5, -5, -10, -10, -20,
-    -10, 0, 0, 0, 0, 0, 0, -10,
-    -10, 5, 5, 5, 5, 5, 0, -10,
-    0, 0, 5, 5, 5, 5, 0, -5,
-    -5, 0, 5, 5, 5, 5, 0, -5,
-    -10, 0, 5, 5, 5, 5, 0, -10,
-    -10, 0, 0, 0, 0, 0, 0, -10,
-    -20, -10, -10, -5, -5, -10, -10, -20]
-kingstable = [
-    20, 30, 10, 0, 0, 10, 30, 20,
-    20, 20, 0, 0, 0, 0, 20, 20,
-    -10, -20, -20, -20, -20, -20, -20, -10,
-    -20, -30, -30, -40, -40, -30, -30, -20,
-    -30, -40, -40, -50, -50, -40, -40, -30,
-    -30, -40, -40, -50, -50, -40, -40, -30,
-    -30, -40, -40, -50, -50, -40, -40, -30,
-    -30, -40, -40, -50, -50, -40, -40, -30]
 
 
 class Solution:
@@ -97,7 +42,7 @@ class Solution:
 
     def tier3_choice(self):
         best_value = -1
-        self.board_estimated = outer_board_estimation(self.bo)
+        self.board_estimated = outer_board_estimation(self.bo)[0]
         best_move = self.random_choice()
         for row in range(0, 8):
             for col in range(0, 8):
@@ -109,68 +54,95 @@ class Solution:
         return best_move
 
     def tier2_choice(self):
-        best_value = -99999
-        best_value_return = 1
-        self.board_estimated = outer_board_estimation(self.bo)
-        best_move = self.random_choice()
-        new_bo = copy.deepcopy(self.bo)
-        for row in range(0, 8):
-            for col in range(0, 8):
-                if new_bo.board[row][col] != 0 and new_bo.board[row][col].color == "b":
-                    for move in new_bo.board[row][col].move_list:
-                        if self.board_estimated[move[1]][move[0]] >= best_value:
-                            best_value = self.board_estimated[move[1]][move[0]]
-                            best_move = (row, col, (move[1], move[0]))
-                    value = best_value
-                    new_bo.move((best_move[0], best_move[1]), (best_move[2][1], best_move[2][0]), "b")
-                    board_estimated = outer_board_estimation(new_bo)
-                    for row2 in range(0, 8):
-                        for col2 in range(0, 8):
-                            if new_bo.board[row2][col2] != 0 and new_bo.board[row2][col2].color == "w":
-                                for move2 in new_bo.board[row2][col2].move_list:
-                                    if board_estimated[move2[1]][move2[0]] < best_value_return:
-                                        best_value_return = board_estimated[move2[1]][move2[0]]
-                                        best_move = (row2, col2, (move2[1], move2[0]))
-                                    value += best_value_return
-                                    if value > best_value:
-                                        best_value = value
-                                        best_move = (row, col, (move[1], move[0]))
-                    new_bo = copy.deepcopy(self.bo)
-        if best_value == 0:
-            best_move = self.random_choice()
-        print(best_value)
+        def minimax(board, depth, alpha, beta, maximazing):
+            if depth == 0:
+                return None, outer_board_estimation(board)[2]
+            minimax_best_move = self.random_choice()
+            if maximazing:
+                max_value = -inf
+                for row1 in range(0, 8):
+                    for col1 in range(0, 8):
+                        board.update_moves()
+                        if board.board[row1][col1] != 0 and board.board[row1][col1].color == "b":
+                            for move in board.board[row1][col1].move_list:
+                                print(board.board[row1][col1].move_list)
+                                board.simple_move((row1, col1), (move[1], move[0]), "b")
+                                current_eval = minimax(board, depth - 1, alpha, beta, False)[1]
+                                board.simple_move((move[1], move[0]), (row1, col1), "b")
+                                board.update_moves()
+                                if current_eval > max_value:
+                                    max_value = current_eval
+                                    minimax_best_move = (row1, col1, (move[1], move[0]))
+                                alpha = max(alpha, current_eval)
+                                if beta <= alpha:
+                                    break
+                        return minimax_best_move, max_value
+            else:
+                min_value = inf
+                for row2 in range(0, 8):
+                    for col2 in range(0, 8):
+                        board.update_moves()
+                        if board.board[row2][col2] != 0 and board.board[row2][col2].color == "w":
+                            for move2 in board.board[row2][col2].move_list:
+                                board.simple_move((row2, col2), (move2[1], move2[0]), "w")
+                                current_eval = minimax(board, depth - 1, alpha, beta, True)[1]
+                                board.simple_move((move2[1], move2[0]), (row2, col2), "w")
+                                board.update_moves()
+                                if current_eval < min_value:
+                                    min_value = current_eval
+                                    minimax_best_move = (row2, col2, (move2[1], move2[0]))
+                                beta = min(beta, current_eval)
+                                if beta <= alpha:
+                                    break
+                        return minimax_best_move, min_value
+        board_copy = copy.deepcopy(self.bo)
+        best_move, best_value = minimax(self.bo, 3, inf, -inf, True)
         return best_move
 
 
 def outer_board_estimation(board):
     board_estimated = [[0 for _ in range(8)] for _ in range(8)]
+    white_score = 0
+    black_score = 0
     for row in range(0, 8):
         for col in range(0, 8):
             if board.board[row][col] != 0:
                 if board.board[row][col].color == "w":
                     if board.board[row][col].__class__.__name__ == "Rook":
                         board_estimated[row][col] = 50
+                        white_score += 50
                     elif board.board[row][col].__class__.__name__ == "Pawn":
                         board_estimated[row][col] = 10
+                        white_score += 10
                     elif board.board[row][col].__class__.__name__ == "Bishop":
                         board_estimated[row][col] = 30
+                        white_score += 30
                     elif board.board[row][col].__class__.__name__ == "Knight":
                         board_estimated[row][col] = 30
+                        white_score += 30
                     elif board.board[row][col].__class__.__name__ == "Queen":
                         board_estimated[row][col] = 90
+                        white_score += 90
                     elif board.board[row][col].__class__.__name__ == "King":
                         board_estimated[row][col] = 900
+                        white_score += 900
                 else:
                     if board.board[row][col].__class__.__name__ == "Rook":
                         board_estimated[row][col] = -50
+                        black_score += 50
                     elif board.board[row][col].__class__.__name__ == "Pawn":
                         board_estimated[row][col] = -10
+                        black_score += 10
                     elif board.board[row][col].__class__.__name__ == "Bishop":
                         board_estimated[row][col] = -30
+                        black_score += 30
                     elif board.board[row][col].__class__.__name__ == "Knight":
                         board_estimated[row][col] = -30
+                        black_score += 30
                     elif board.board[row][col].__class__.__name__ == "Queen":
                         board_estimated[row][col] = -90
+                        black_score += 90
                     elif board.board[row][col].__class__.__name__ == "King":
                         board_estimated[row][col] = -900
-    return board_estimated
+                        black_score += 900
+    return board_estimated, white_score, black_score

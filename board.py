@@ -147,3 +147,14 @@ class Board:
             self.reset_selected()
         self.update_moves()
         return changed
+
+    def simple_move(self, src, dst, color):
+        new_board = self.board[:]
+        if new_board[src[0]][src[1]].pawn:
+            new_board[src[0]][src[1]].first = False
+        new_board[src[0]][src[1]].change_pos((dst[0], dst[1]))
+        new_board[dst[0]][dst[1]] = new_board[src[0]][src[1]]
+        new_board[src[0]][src[1]] = 0
+        self.board = new_board
+        self.is_attheend(color)
+        self.update_moves()

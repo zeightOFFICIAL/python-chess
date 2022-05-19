@@ -323,10 +323,10 @@ class Pawn(Piece):
                 if self.first:
                     if i < 6:
                         p = board[i + 2][j]
+                        p1 = board[i + 1][j]
+                        if p1 == 0:
+                            moves.append((j, i + 1))
                         if p == 0:
-                            if board[i + 1][j] == 0:
-                                moves.append((j, i + 2))
-                        elif p.color != self.color:
                             moves.append((j, i + 2))
             # WHITE
             else:
@@ -347,10 +347,10 @@ class Pawn(Piece):
                 if self.first:
                     if i > 1:
                         p = board[i - 2][j]
+                        p1 = board[i - 1][j]
+                        if p1 == 0:
+                            moves.append((j, i - 1))
                         if p == 0:
-                            if board[i - 1][j] == 0:
-                                moves.append((j, i - 2))
-                        elif p.color != self.color:
                             moves.append((j, i - 2))
         except:
             pass
