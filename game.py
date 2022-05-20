@@ -181,7 +181,7 @@ def main():
                 if difficulty == 1:
                     (piecex, piecey), choice = solve.tier3_choice()
                 elif difficulty == 2:
-                    (piecex, piecey), choice = solve.tier2_choice()
+                    pass
                 elif difficulty == 3:
                     pass
                 print((piecex, piecey), (choice[1], choice[0]))
