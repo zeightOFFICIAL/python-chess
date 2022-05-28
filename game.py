@@ -138,8 +138,8 @@ def main():
     run = True
     statewhite = 0
     stateblack = 0
-    count_white = 0
-    count_black = 0
+    white_wants_draw = 0
+    black_wants_draw = 0
     while run:
         clock.tick(fps_max)
         if turn == "w":
@@ -168,11 +168,15 @@ def main():
                     else:
                         end_screen("White Wins!", time.time() - start_time)
                 if event.key == pygame.K_p:
-                    if turn == "w":
-                        count_white = 1
-                    if turn == "b":
-                        count_black = 1
-                    if count_black and count_white:
+                    if turn == "w" and white_wants_draw == 0:
+                        white_wants_draw = 1
+                    elif turn == "w" and white_wants_draw == 1:
+                        white_wants_draw = 0
+                    if turn == "b" and white_wants_draw == 0:
+                        black_wants_draw = 1
+                    elif turn == "b" and white_wants_draw == 1:
+                        black_wants_draw = 0
+                    if black_wants_draw and white_wants_draw:
                         end_screen("Draw!", time.time() - start_time)
             if turn == "b" and game_mode == 1:
                 bo.update_moves()
@@ -184,9 +188,7 @@ def main():
                     pass
                 elif difficulty == 3:
                     pass
-                print((piecex, piecey), (choice[1], choice[0]))
                 bo.move((piecex, piecey), (choice[1], choice[0]), "b")
-                bo.update_moves()
                 change = True
                 if change:
                     wide_timer = time.time()
@@ -196,42 +198,42 @@ def main():
                     if bo.is_checked("w") and statewhite == 1:
                         end_screen("Black Wins!", time.time() - start_time)
                     turn = "w"
-                continue
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos()
-                bo.update_moves()
-                if padding_abs_half < pos[0] < width - padding_abs_half \
-                        and padding_abs_half < pos[1] < width - padding_abs_half:
-                    i, j = click(pos)
-                    try:
-                        change = bo.select(i, j, turn)
-                        bo.update_moves()
-                    except AttributeError:
-                        change = False
-                    if change:
-                        wide_timer = time.time()
-                        if turn == "w":
-                            bo.reset_selected()
-                            if bo.is_checked("w") and statewhite == 1:
-                                end_screen("Black Wins!", time.time() - start_time)
-                            if bo.is_checked("b") and stateblack == 1:
-                                end_screen("White Wins!", time.time() - start_time)
-                            turn = "b"
-                        else:
-                            bo.reset_selected()
-                            if bo.is_checked("b") and stateblack == 1:
-                                end_screen("White Wins!", time.time() - start_time)
-                            if bo.is_checked("w") and statewhite == 1:
-                                end_screen("Black Wins!", time.time() - start_time)
-                            turn = "w"
-                if bo.is_checked("w"):
-                    statewhite = 1
-                else:
-                    statewhite = 0
-                if bo.is_checked("b"):
-                    stateblack = 1
-                else:
-                    stateblack = 0
+            elif (turn == "w" and game_mode == 1) or game_mode == 0:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    pos = pygame.mouse.get_pos()
+                    bo.update_moves()
+                    if padding_abs_half < pos[0] < width - padding_abs_half \
+                            and padding_abs_half < pos[1] < width - padding_abs_half:
+                        i, j = click(pos)
+                        try:
+                            change = bo.select(i, j, turn)
+                            bo.update_moves()
+                        except AttributeError:
+                            change = False
+                        if change:
+                            wide_timer = time.time()
+                            if turn == "w":
+                                bo.reset_selected()
+                                if bo.is_checked("w") and statewhite == 1:
+                                    end_screen("Black Wins!", time.time() - start_time)
+                                if bo.is_checked("b") and stateblack == 1:
+                                    end_screen("White Wins!", time.time() - start_time)
+                                turn = "b"
+                            else:
+                                bo.reset_selected()
+                                if bo.is_checked("b") and stateblack == 1:
+                                    end_screen("White Wins!", time.time() - start_time)
+                                if bo.is_checked("w") and statewhite == 1:
+                                    end_screen("Black Wins!", time.time() - start_time)
+                                turn = "w"
+                    if bo.is_checked("w"):
+                        statewhite = 1
+                    else:
+                        statewhite = 0
+                    if bo.is_checked("b"):
+                        stateblack = 1
+                    else:
+                        stateblack = 0
 
 
 win = pygame.display.set_mode((width, height), vsync=True)
