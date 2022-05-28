@@ -9,16 +9,16 @@ class Board:
         self.set_start()
 
     def set_start(self):
-        self.board[0][0] = Rook(0, 0, "b")
-        self.board[0][1] = Knight(0, 1, "b")
-        self.board[0][2] = Bishop(0, 2, "b")
-        self.board[0][3] = Queen(0, 3, "b")
+        #self.board[0][0] = Rook(0, 0, "b")
+        #self.board[0][1] = Knight(0, 1, "b")
+        #self.board[0][2] = Bishop(0, 2, "b")
+        #self.board[0][3] = Queen(0, 3, "b")
         self.board[0][4] = King(0, 4, "b")
-        self.board[0][5] = Bishop(0, 5, "b")
-        self.board[0][6] = Knight(0, 6, "b")
-        self.board[0][7] = Rook(0, 7, "b")
+        #self.board[0][5] = Bishop(0, 5, "b")
+        #self.board[0][6] = Knight(0, 6, "b")
+        #self.board[0][7] = Rook(0, 7, "b")
         for line in range(0, 8):
-            self.board[1][line] = Pawn(1, line, "b")
+           self.board[1][line] = Pawn(1, line, "b")
 
         self.board[7][0] = Rook(7, 0, "w")
         self.board[7][1] = Knight(7, 1, "w")

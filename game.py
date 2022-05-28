@@ -172,23 +172,26 @@ def main():
                         white_wants_draw = 1
                     elif turn == "w" and white_wants_draw == 1:
                         white_wants_draw = 0
-                    if turn == "b" and white_wants_draw == 0:
+                    if turn == "b" and black_wants_draw == 0:
                         black_wants_draw = 1
-                    elif turn == "b" and white_wants_draw == 1:
+                    elif turn == "b" and black_wants_draw == 1:
                         black_wants_draw = 0
                     if black_wants_draw and white_wants_draw:
                         end_screen("Draw!", time.time() - start_time)
             if turn == "b" and game_mode == 1:
                 bo.update_moves()
                 solve = Solution(bo)
-                (piecex, piecey), choice = solve.random_choice()
+                try:
+                    (piecex, piecey), choice = solve.random_choice()
+                except TypeError:
+                    end_screen("Black Wins!", time.time() - start_time)
                 if difficulty == 1:
                     (piecex, piecey), choice = solve.tier3_choice()
                 elif difficulty == 2:
                     pass
                 elif difficulty == 3:
                     pass
-                bo.move((piecex, piecey), (choice[1], choice[0]), "b")
+                bo.simple_move((piecex, piecey), (choice[1], choice[0]), "b")
                 change = True
                 if change:
                     wide_timer = time.time()
@@ -198,6 +201,7 @@ def main():
                     if bo.is_checked("w") and statewhite == 1:
                         end_screen("Black Wins!", time.time() - start_time)
                     turn = "w"
+                continue
             elif (turn == "w" and game_mode == 1) or game_mode == 0:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pos = pygame.mouse.get_pos()
