@@ -18,7 +18,7 @@ class Board:
         #self.board[0][6] = Knight(0, 6, "b")
         #self.board[0][7] = Rook(0, 7, "b")
         for line in range(0, 8):
-           self.board[1][line] = Pawn(1, line, "b")
+            self.board[1][line] = Pawn(1, line, "b")
 
         self.board[7][0] = Rook(7, 0, "w")
         self.board[7][1] = Knight(7, 1, "w")

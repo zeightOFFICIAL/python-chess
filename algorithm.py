@@ -39,6 +39,7 @@ class Solution:
     def tier3_choice(self):
         best_value = -inf
         best_move = self.random_choice()
+        salvation = False
         self.evaluation = outer_board_estimation(self.bo)
         was_checked = self.bo.is_checked("b")
         for row in range(0, 8):
@@ -52,17 +53,22 @@ class Solution:
                                 if outer_board_estimation(new_board) > best_value:
                                     best_value = outer_board_estimation(new_board)
                                     best_move = ((row, col), (move[0], move[1]))
+                                    salvation = True
                         else:
+                            salvation = True
                             new_board.simple_move((row, col), (move[1], move[0]), "b")
                             if not new_board.is_checked("b"):
                                 if outer_board_estimation(new_board) > best_value:
                                     best_value = outer_board_estimation(new_board)
                                     best_move = ((row, col), (move[0], move[1]))
+        if not salvation:
+            return -1
         if best_value == self.evaluation and not was_checked:
             return self.random_choice()
         return best_move
 
     def tier2_choice(self):
+
         return self.random_choice()
 
 
@@ -77,6 +83,41 @@ def get_all_moves(board, color):
 
 
 def outer_board_estimation(board):
+    white_score = 0
+    black_score = 0
+    for row in range(0, 8):
+        for col in range(0, 8):
+            if board.board[row][col] != 0:
+                if board.board[row][col].color == "w":
+                    if board.board[row][col].__class__.__name__ == "Rook":
+                        white_score += 50
+                    elif board.board[row][col].__class__.__name__ == "Pawn":
+                        white_score += 10
+                    elif board.board[row][col].__class__.__name__ == "Bishop":
+                        white_score += 30
+                    elif board.board[row][col].__class__.__name__ == "Knight":
+                        white_score += 30
+                    elif board.board[row][col].__class__.__name__ == "Queen":
+                        white_score += 90
+                    elif board.board[row][col].__class__.__name__ == "King":
+                        white_score += 900
+                else:
+                    if board.board[row][col].__class__.__name__ == "Rook":
+                        black_score += 50
+                    elif board.board[row][col].__class__.__name__ == "Pawn":
+                        black_score += 10
+                    elif board.board[row][col].__class__.__name__ == "Bishop":
+                        black_score += 30
+                    elif board.board[row][col].__class__.__name__ == "Knight":
+                        black_score += 30
+                    elif board.board[row][col].__class__.__name__ == "Queen":
+                        black_score += 90
+                    elif board.board[row][col].__class__.__name__ == "King":
+                        black_score += 900
+    return black_score - white_score
+
+
+def outer_board_advanced_estimation(board):
     white_score = 0
     black_score = 0
     for row in range(0, 8):

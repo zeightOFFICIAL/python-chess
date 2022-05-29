@@ -179,20 +179,21 @@ def main():
                     if black_wants_draw and white_wants_draw:
                         end_screen("Draw!", time.time() - start_time)
             if turn == "b" and game_mode == 1:
+                change = False
                 bo.update_moves()
                 solve = Solution(bo)
                 try:
                     (piecex, piecey), choice = solve.random_choice()
+                    if difficulty == 1:
+                        (piecex, piecey), choice = solve.tier3_choice()
+                    elif difficulty == 2:
+                        (piecex, piecey), choice = solve.tier2_choice()
+                    elif difficulty == 3:
+                        pass
+                    bo.simple_move((piecex, piecey), (choice[1], choice[0]), "b")
+                    change = True
                 except TypeError:
                     end_screen("Black Wins!", time.time() - start_time)
-                if difficulty == 1:
-                    (piecex, piecey), choice = solve.tier3_choice()
-                elif difficulty == 2:
-                    pass
-                elif difficulty == 3:
-                    pass
-                bo.simple_move((piecex, piecey), (choice[1], choice[0]), "b")
-                change = True
                 if change:
                     wide_timer = time.time()
                     bo.reset_selected()
