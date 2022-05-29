@@ -1,4 +1,5 @@
 import copy
+import random
 from random import choice
 from math import inf
 
@@ -8,37 +9,42 @@ class Solution:
         self.bo = board
         self.evaluation = 0
 
-    def random_choice(self):
+    def random_choice(self, color):
         all_pieces = []
-        was_checked = self.bo.is_checked("b")
+        all_moves = []
+        was_checked = self.bo.is_checked(color)
+        self.bo.update_moves()
+        new_board = copy.deepcopy(self.bo)
         for row in range(0, 8):
             for col in range(0, 8):
-                if self.bo.board[row][col] != 0:
-                    if self.bo.board[row][col].color == "b":
-                        all_pieces.append(self.bo.board[row][col])
-        if was_checked:
-            for piece in all_pieces:
-                for move in piece.move_list:
+                if new_board.board[row][col] != 0:
+                    if new_board.board[row][col].color == color:
+                        if len(new_board.board[row][col].move_list) > 0:
+                            all_pieces.append(new_board.board[row][col])
+        for piece in all_pieces:
+            for move in piece.move_list:
+                if was_checked:
                     new_board = copy.deepcopy(self.bo)
-                    new_board.simple_move((piece.row, piece.col), (move[0], move[1]), "b")
-                    if not new_board.is_checked("b"):
+                    new_board.simple_move((piece.row, piece.col), (move[1], move[0]), color)
+                    if not new_board.is_checked(color):
+                        print((piece.row, piece.col), (move[0], move[1]))
+                        print(new_board.board)
                         return (piece.row, piece.col), (move[0], move[1])
+                else:
+                    new_board = copy.deepcopy(self.bo)
+                    new_board.simple_move((piece.row, piece.col), (move[1], move[0]), color)
+                    if not new_board.is_checked(color):
+                        all_moves.append(((piece.row, piece.col), (move[0], move[1])))
+        if was_checked:
             return -1
         else:
-            while True:
-                random_piece = choice(all_pieces)
-                if len(random_piece.move_list) > 0:
-                    random_move = choice(random_piece.move_list)
-                    random_move = ((random_piece.row, random_piece.col), (random_move[0], random_move[1]))
-                    new_board = copy.deepcopy(self.bo)
-                    new_board.simple_move((random_move[0][0], random_move[0][1]),
-                                          (random_move[1][1], random_move[1][0]), "b")
-                    if not new_board.is_checked("b"):
-                        return random_move
+            if len(all_moves) <= 0:
+                return -1
+            return random.choice(all_moves)
 
     def tier3_choice(self):
         best_value = -inf
-        best_move = self.random_choice()
+        best_move = self.random_choice(color)
         salvation = False
         self.evaluation = outer_board_estimation(self.bo)
         was_checked = self.bo.is_checked("b")
