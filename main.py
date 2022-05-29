@@ -16,8 +16,8 @@ main.py
 PyCharm 2021.3.3
 Python 3.9
 
-28.05.2022
-ver 0.759
+29.05.2022
+ver 0.765
 """
 
 import game
