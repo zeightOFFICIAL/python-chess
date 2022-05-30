@@ -1,6 +1,6 @@
 # defaults
 # rate of screen update [it is not recommended to change]
-fps_max = 24
+fps_max = 36
 # window width and height [free change]
 width = 750
 # game mode [free change]
@@ -19,11 +19,11 @@ padding_absolute = 130
 # visual set (released in build 800) [free change]
 visual_set = 0
 # timer for each person (in minutes) [free change]
-time_restriction = 30
+time_restriction = 20
 # size increment [it is not recommended to change]
-pop_increasing_size = 55
+pop_increasing_size = 60
 # time before game starts [it is not recommended to change]
-freeze_time = 0
+freeze_time = 5
 
 # reading from file
 

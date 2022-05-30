@@ -1,5 +1,5 @@
-game_mode=0
-difficulty=1
+game_mode=1
+difficulty=2
 fps_max=36
 width=750
 padding_absolute=130
