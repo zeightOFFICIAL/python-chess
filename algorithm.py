@@ -1,13 +1,13 @@
 import copy
 import random
-from random import choice
 from math import inf
+from threading import Thread
 
 
 class Solution:
     def __init__(self, board):
         self.bo = board
-        self.evaluation = 0
+        self.evaluation = outer_board_estimation(self.bo)
 
     def random_choice(self, color):
         all_pieces = []
@@ -27,8 +27,6 @@ class Solution:
                     new_board = copy.deepcopy(self.bo)
                     new_board.simple_move((piece.row, piece.col), (move[1], move[0]), color)
                     if not new_board.is_checked(color):
-                        print((piece.row, piece.col), (move[0], move[1]))
-                        print(new_board.board)
                         return (piece.row, piece.col), (move[0], move[1])
                 else:
                     new_board = copy.deepcopy(self.bo)
@@ -42,40 +40,45 @@ class Solution:
                 return -1
             return random.choice(all_moves)
 
-    def tier3_choice(self):
+    def tier3_choice(self, color):
+        all_pieces = []
         best_value = -inf
-        best_move = self.random_choice(color)
-        salvation = False
-        self.evaluation = outer_board_estimation(self.bo)
-        was_checked = self.bo.is_checked("b")
+        was_checked = self.bo.is_checked(color)
+        self.bo.update_moves()
+        new_board = copy.deepcopy(self.bo)
+        best_move = -1
         for row in range(0, 8):
             for col in range(0, 8):
-                if self.bo.board[row][col] != 0 and self.bo.board[row][col].color == "b":
-                    for move in self.bo.board[row][col].move_list:
-                        new_board = copy.deepcopy(self.bo)
-                        if was_checked:
-                            new_board.simple_move((row, col), (move[1], move[0]), "b")
-                            if not new_board.is_checked("b"):
-                                if outer_board_estimation(new_board) > best_value:
-                                    best_value = outer_board_estimation(new_board)
-                                    best_move = ((row, col), (move[0], move[1]))
-                                    salvation = True
-                        else:
-                            salvation = True
-                            new_board.simple_move((row, col), (move[1], move[0]), "b")
-                            if not new_board.is_checked("b"):
-                                if outer_board_estimation(new_board) > best_value:
-                                    best_value = outer_board_estimation(new_board)
-                                    best_move = ((row, col), (move[0], move[1]))
-        if not salvation:
-            return -1
+                if new_board.board[row][col] != 0:
+                    if new_board.board[row][col].color == color:
+                        if len(new_board.board[row][col].move_list) > 0:
+                            all_pieces.append(new_board.board[row][col])
+        for piece in all_pieces:
+            for move in piece.move_list:
+                if was_checked:
+                    new_board = copy.deepcopy(self.bo)
+                    new_board.simple_move((piece.row, piece.col), (move[1], move[0]), color)
+                    if not new_board.is_checked(color):
+                        if best_move == -1:
+                            best_move = (piece.row, piece.col), (move[0], move[1])
+                            best_value = outer_board_estimation(new_board)
+                        elif outer_board_estimation(new_board) > best_value:
+                            best_move = (piece.row, piece.col), (move[0], move[1])
+                            best_value = outer_board_estimation(new_board)
+                else:
+                    new_board = copy.deepcopy(self.bo)
+                    new_board.simple_move((piece.row, piece.col), (move[1], move[0]), color)
+                    if not new_board.is_checked(color):
+                        if outer_board_estimation(new_board) > best_value:
+                            best_value = outer_board_estimation(new_board)
+                            best_move = (piece.row, piece.col), (move[0], move[1])
         if best_value == self.evaluation and not was_checked:
-            return self.random_choice()
+            return self.random_choice(color)
         return best_move
 
-    def tier2_choice(self):
+    def tier2_choice(self, color):
 
-        return self.random_choice()
+        return self.random_choice(color)
 
 
 def get_all_moves(board, color):

@@ -3,13 +3,20 @@
 fps_max = 24
 # window width and height [free change]
 width = 750
-# game mode (0 - PvP, 1 - PvE) [free change]
+# game mode [free change]
+# 0 - PvP
+# 1 - PvE
+# 2 - EvE (released in build 1000)
 game_mode = 0
-# if game mode is 1, then difficulty determines algorithms complexity
+# if game mode is 1, then difficulty determines algorithms complexity [free change]
+# 0 - random
+# 1 - evaluation
+# 2 - minimax (released in build 800)
+# 3 - advanced minimax (released in build 900)
 difficulty = 0
 # padding size, distance between board and the window border [it is not recommended to change]
 padding_absolute = 130
-# visual set (experimental, released in build 800) [free change]
+# visual set (released in build 800) [free change]
 visual_set = 0
 # timer for each person (in minutes) [free change]
 time_restriction = 30

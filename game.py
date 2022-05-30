@@ -11,7 +11,12 @@ from algorithm import Solution
 from flowingconfig import *
 raw_board = pygame.image.load("res/images/eq_chessboard.png")
 icon = pygame.image.load("res/images/icon.png")
-board = pygame.transform.scale(raw_board, (width - padding_absolute, height - padding_absolute))
+if visual_set != 0:
+    try:
+        raw_board = pygame.image.load("res/images/"+str(visual_set)+"/eq_chessboard.png")
+    except FileNotFoundError:
+        print("log: custom visual set cannot be loaded")
+board = pygame.transform.smoothscale(raw_board, (width - padding_absolute, height - padding_absolute))
 
 
 # functions -------------------------------------------------
@@ -185,9 +190,9 @@ def main():
                 try:
                     (piecex, piecey), choice = solve.random_choice(turn)
                     if difficulty == 1:
-                        (piecex, piecey), choice = solve.tier3_choice()
+                        (piecex, piecey), choice = solve.tier3_choice(turn)
                     elif difficulty == 2:
-                        (piecex, piecey), choice = solve.tier2_choice()
+                        (piecex, piecey), choice = solve.tier2_choice(turn)
                     elif difficulty == 3:
                         pass
                     bo.simple_move((piecex, piecey), (choice[1], choice[0]), "b")

@@ -1,7 +1,7 @@
 """
 Algorithms and data structures
 Project
-Chess game
+Chess game (PyChess)
 IKPI-04
 Saganenko Artemii, Kuksin Alexander
 
@@ -16,8 +16,8 @@ main.py
 PyCharm 2021.3.3
 Python 3.9
 
-29.05.2022
-ver 0.766
+30.05.2022
+ver 0.770
 """
 
 import game
