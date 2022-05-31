@@ -68,34 +68,31 @@ class Solution:
     def tier2_choice(self, color):
         def minimaxdepth2(color_inminimax):
             maxed_value = -inf
+            min_value = inf
             maxed_move = -1
             new_board1 = copy.deepcopy(self.bo)
-
             all_pieces1 = get_all_pieces(new_board1, color_inminimax)
             for piece1 in all_pieces1:
                 for move1 in piece1.move_list:
                     new_board1 = copy.deepcopy(self.bo)
                     new_board1.simple_move((piece1.row, piece1.col), (move1[1], move1[0]), color_inminimax)
                     if not new_board1.is_checked(color_inminimax):
-                        all_pieces2 = get_all_pieces(new_board1, "w" if color == "b" else "b")
+                        all_pieces2 = get_all_pieces(new_board1, "w" if color_inminimax == "b" else "b")
                         min_value = inf
                         for piece2 in all_pieces2:
                             for move2 in piece2.move_list:
                                 new_board2 = copy.deepcopy(new_board1)
                                 new_board2.simple_move((piece2.row, piece2.col), (move2[1], move2[0]),
-                                                       "w" if color == "b" else "b")
-                                if outer_board_estimation(new_board2, "w" if color == "b" else "b") < min_value:
-                                    min_value = outer_board_estimation(new_board2, "w" if color == "b" else "b")
+                                                       "w" if color_inminimax == "b" else "b")
+                                if outer_board_estimation(new_board2, color_inminimax) < min_value:
+                                    min_value = outer_board_estimation(new_board2, color_inminimax)
                         total_value = outer_board_estimation(new_board1, color_inminimax) + min_value
                         if total_value > maxed_value:
                             maxed_value = total_value
                             maxed_move = (piece1.row, piece1.col), (move1[0], move1[1])
-                print(maxed_value)
-
-            if maxed_value == self.evaluation and not was_checked:
-                return self.random_choice(color)
+            if self.evaluation == maxed_value:
+                return self.random_choice(color_inminimax)
             return maxed_move
-
         was_checked = self.bo.is_checked(color)
         if was_checked:
             all_pieces = get_all_pieces(self.bo, color)
@@ -118,72 +115,7 @@ class Solution:
             return best_move
 
     def tier1_choice(self, color):
-        def minimax(board, depth, maximizing, maximizing_color):
-            dynamic_board = copy.deepcopy(board)
-            if depth == 0:
-                return None, outer_board_estimation(dynamic_board, color)
-            best_move_inminimax = self.random_choice(maximizing_color)
-
-            """if maximizing:
-                all_pieces_inminimax = get_all_pieces(dynamic_board, color_inminimax)
-                max_value = -inf
-                for piece_inminimax in all_pieces_inminimax:
-                    for move_inminimax in piece_inminimax:
-                        dynamic_board = copy.deepcopy(board)"""
-            if maximizing:
-                all_pieces_inminimax = get_all_pieces(dynamic_board, maximizing_color)
-                max_value = -inf
-                for piece_inminimax in all_pieces_inminimax:
-                    for move_inminimax in piece_inminimax.move_list:
-                        dynamic_board = copy.deepcopy(board)
-                        dynamic_board.simple_move((piece_inminimax.row, piece_inminimax.col),
-                                                  (move_inminimax[1], move_inminimax[0]), maximizing_color)
-                        current_value = minimax(dynamic_board, depth - 1, False, maximizing_color)[1]
-                        dynamic_board = copy.deepcopy(board)
-                        if current_value > max_value:
-                            max_value = current_value
-                            best_move_inminimax = ((piece_inminimax.row, piece_inminimax.col),
-                                                   (move_inminimax[0], move_inminimax[1]))
-                return best_move_inminimax, max_value
-            else:
-                all_pieces_inminimax = get_all_pieces(dynamic_board, "w" if maximizing_color == "b" else "b")
-                min_value = inf
-                for piece_inminimax in all_pieces_inminimax:
-                    for move_inminimax in piece_inminimax.move_list:
-                        dynamic_board = copy.deepcopy(board)
-                        dynamic_board.simple_move((piece_inminimax.row, piece_inminimax.col),
-                                                  (move_inminimax[1], move_inminimax[0]), maximizing_color)
-                        current_value = minimax(dynamic_board, depth - 1, True, maximizing_color)[1]
-                        dynamic_board = copy.deepcopy(board)
-                        if current_value < min_value:
-                            min_value = current_value
-                            best_move_inminimax = ((piece_inminimax.row, piece_inminimax.col),
-                                                   (move_inminimax[0], move_inminimax[1]))
-                return best_move_inminimax, min_value
-
-        was_checked = self.bo.is_checked(color)
-        if was_checked:
-            all_pieces = get_all_pieces(self.bo, color)
-            best_move = self.random_choice(color)
-            best_value = -inf
-            for piece in all_pieces:
-                for move in piece.move_list:
-                    new_board = copy.deepcopy(self.bo)
-                    new_board.simple_move((piece.row, piece.col), (move[1], move[0]), color)
-                    if not new_board.is_checked(color):
-                        if best_value == -inf:
-                            best_move = (piece.row, piece.col), (move[0], move[1])
-                            best_value = outer_board_estimation(new_board, color)
-                        elif outer_board_estimation(new_board, color) > best_value:
-                            best_move = (piece.row, piece.col), (move[0], move[1])
-                            best_value = outer_board_estimation(new_board, color)
-            return best_move
-        else:
-            new_board = copy.deepcopy(self.bo)
-            best_move, best_value = minimax(new_board, 2, True, color)
-            print(best_value)
-
-            return best_move
+        return self.random_choice(color)
 
 
 def get_all_pieces(board, color):
@@ -236,6 +168,14 @@ def outer_board_estimation(board, color):
 
 
 def outer_board_advanced_estimation(board, color):
+    pawn_list = [[0,  0,  0,  0,  0,  0,  0,  0],
+                 [50, 50, 50, 50, 50, 50, 50, 50],
+                 [10, 10, 20, 30, 30, 20, 10, 10],
+                 [5,  5, 10, 25, 25, 10,  5,  5],
+                 [0,  0,  0, 20, 20,  0,  0,  0],
+                 [5, -5, -10,  0,  0, -10, -5,  5],
+                 [5, 10, 10, -20, -20, 10, 10,  5],
+                 [0,  0,  0,  0,  0,  0,  0,  0]]
     white_score = 0
     black_score = 0
     for row in range(0, 8):
@@ -262,7 +202,6 @@ def outer_board_advanced_estimation(board, color):
                     elif board.board[row][col].__class__.__name__ == "Bishop":
                         black_score += 30
                     elif board.board[row][col].__class__.__name__ == "Knight":
-                        black_score += 30
                         black_score += 30
                     elif board.board[row][col].__class__.__name__ == "Queen":
                         black_score += 90

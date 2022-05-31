@@ -137,6 +137,7 @@ def main():
     wide_timer = time.time()
     start_time = time.time()
     turn = "w"
+    turn_number = 0
     bo = Board(8, 8)
     bo.update_moves()
     clock = pygame.time.Clock()
@@ -187,14 +188,12 @@ def main():
                 change = False
                 bo.update_moves()
                 solve = Solution(bo)
-                (piecex, piecey), choice = solve.tier2_choice(turn)
                 try:
                     (piecex, piecey), choice = solve.random_choice(turn)
                     if difficulty == 1:
                         (piecex, piecey), choice = solve.tier3_choice(turn)
                     elif difficulty == 2:
                         (piecex, piecey), choice = solve.tier2_choice(turn)
-                        pass
                     elif difficulty == 3:
                         pass
                     bo.simple_move((piecex, piecey), (choice[1], choice[0]), "b")
@@ -202,8 +201,8 @@ def main():
                 except TypeError:
                     print("type")
                     end_screen("White Wins!", time.time() - start_time)
-
                 if change:
+                    turn_number += 1
                     wide_timer = time.time()
                     bo.reset_selected()
                     if bo.is_checked("b") and stateblack == 1:
@@ -232,6 +231,7 @@ def main():
                         except AttributeError:
                             change = False
                         if change:
+                            turn_number += 1
                             wide_timer = time.time()
                             if turn == "w":
                                 bo.reset_selected()

@@ -125,13 +125,6 @@ class Board:
         checked_before = self.is_checked(color)
         changed = True
         new_board = self.board[:]
-        if new_board[src[0]][src[1]].pawn:
-            new_board[src[0]][src[1]].first = False
-        new_board[src[0]][src[1]].change_pos((dst[0], dst[1]))
-        new_board[dst[0]][dst[1]] = new_board[src[0]][src[1]]
-        new_board[src[0]][src[1]] = 0
-        self.board = new_board
-        self.is_attheend(color)
         if self.is_checked(color) and not (checked_before and self.is_checked(color)):
             changed = False
             new_board = self.board[:]
@@ -144,6 +137,13 @@ class Board:
             self.board = new_board
         else:
             self.reset_selected()
+        if new_board[src[0]][src[1]].pawn:
+            new_board[src[0]][src[1]].first = False
+        new_board[src[0]][src[1]].change_pos((dst[0], dst[1]))
+        new_board[dst[0]][dst[1]] = new_board[src[0]][src[1]]
+        new_board[src[0]][src[1]] = 0
+        self.board = new_board
+        self.is_attheend(color)
         self.update_moves()
         return changed
 
