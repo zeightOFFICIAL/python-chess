@@ -195,10 +195,10 @@ def main():
                     elif difficulty == 2:
                         (piecex, piecey), choice = solve.tier2_choice(turn)
                     elif difficulty == 3:
-                        pass
+                        (piecex, piecey), choice = solve.tier1_choice(turn)
                     bo.simple_move((piecex, piecey), (choice[1], choice[0]), "b")
                     change = True
-                except TypeError:
+                except ValueError:
                     print("type")
                     end_screen("White Wins!", time.time() - start_time)
                 if change:
