@@ -6,7 +6,6 @@ width = 750
 # game mode [free change]
 # 0 - PvP
 # 1 - PvE
-# 2 - EvE (released in build 1000)
 game_mode = 0
 # if game mode is 1, then difficulty determines algorithms complexity [free change]
 # 0 - random

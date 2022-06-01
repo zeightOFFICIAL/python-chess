@@ -129,7 +129,7 @@ def get_all_pieces(board, color):
     return all_pieces
 
 
-def outer_board_estimation(board, color):
+"""def outer_board_estimation(board, color):
     white_score = 0
     black_score = 0
     for row in range(0, 8):
@@ -137,37 +137,37 @@ def outer_board_estimation(board, color):
             if board.board[row][col] != 0:
                 if board.board[row][col].color == "w":
                     if board.board[row][col].__class__.__name__ == "Rook":
-                        white_score += 50
+                        white_score += 500
                     elif board.board[row][col].__class__.__name__ == "Pawn":
-                        white_score += 10
+                        white_score += 100
                     elif board.board[row][col].__class__.__name__ == "Bishop":
-                        white_score += 30
+                        white_score += 330
                     elif board.board[row][col].__class__.__name__ == "Knight":
-                        white_score += 30
+                        white_score += 320
                     elif board.board[row][col].__class__.__name__ == "Queen":
-                        white_score += 90
-                    elif board.board[row][col].__class__.__name__ == "King":
                         white_score += 900
+                    elif board.board[row][col].__class__.__name__ == "King":
+                        white_score += 20000
                 else:
                     if board.board[row][col].__class__.__name__ == "Rook":
-                        black_score += 50
+                        black_score += 500
                     elif board.board[row][col].__class__.__name__ == "Pawn":
-                        black_score += 10
+                        black_score += 100
                     elif board.board[row][col].__class__.__name__ == "Bishop":
-                        black_score += 30
+                        black_score += 330
                     elif board.board[row][col].__class__.__name__ == "Knight":
-                        black_score += 30
+                        black_score += 320
                     elif board.board[row][col].__class__.__name__ == "Queen":
-                        black_score += 90
-                    elif board.board[row][col].__class__.__name__ == "King":
                         black_score += 900
+                    elif board.board[row][col].__class__.__name__ == "King":
+                        black_score += 20000
     if color == "w":
         return white_score - black_score
     else:
-        return black_score - white_score
+        return black_score - white_score"""
 
 
-def outer_board_advanced_estimation(board, color):
+def outer_board_estimation(board, color):
     pawn_list = [[0,  0,  0,  0,  0,  0,  0,  0],
                  [50, 50, 50, 50, 50, 50, 50, 50],
                  [10, 10, 20, 30, 30, 20, 10, 10],
@@ -176,6 +176,22 @@ def outer_board_advanced_estimation(board, color):
                  [5, -5, -10,  0,  0, -10, -5,  5],
                  [5, 10, 10, -20, -20, 10, 10,  5],
                  [0,  0,  0,  0,  0,  0,  0,  0]]
+    knight_list = [[-50, -40, -30, -30, -30, -30, -40, -50],
+                   [-40, -20,  0,  0,  0,  0, -20, -40],
+                   [-30,  0, 10, 15, 15, 10,  0, -30],
+                   [-30,  5, 15, 20, 20, 15,  5, -30],
+                   [-30,  0, 15, 20, 20, 15,  0, -30],
+                   [-30,  5, 10, 15, 15, 10,  5, -30],
+                   [-40, -20,  0,  5,  5,  0, -20, -40],
+                   [-50, -40, -30, -30, -30, -30, -40, -50]]
+    bishop_list = [[-20, -10, -10, -10, -10, -10, -10, -20],
+                   [-10,  0,  0,  0,  0,  0,  0, -10],
+                   [-10,  0,  5, 10, 10,  5,  0, -10],
+                   [-10,  5,  5, 10, 10,  5,  5, -10],
+                   [-10,  0, 10, 10, 10, 10,  0, -10],
+                   [-10, 10, 10, 10, 10, 10, 10, -10],
+                   [-10,  5,  0,  0,  0,  0,  5, -10],
+                   [-20, -10, -10, -10, -10, -10, -10, -20]]
     white_score = 0
     black_score = 0
     for row in range(0, 8):
@@ -183,30 +199,30 @@ def outer_board_advanced_estimation(board, color):
             if board.board[row][col] != 0:
                 if board.board[row][col].color == "w":
                     if board.board[row][col].__class__.__name__ == "Rook":
-                        white_score += 50
+                        white_score += 500
                     elif board.board[row][col].__class__.__name__ == "Pawn":
-                        white_score += 10
+                        white_score += 100
                     elif board.board[row][col].__class__.__name__ == "Bishop":
-                        white_score += 30
+                        white_score += 330 + bishop_list[row][col]
                     elif board.board[row][col].__class__.__name__ == "Knight":
-                        white_score += 30
+                        white_score += 320 + knight_list[row][col]
                     elif board.board[row][col].__class__.__name__ == "Queen":
-                        white_score += 90
-                    elif board.board[row][col].__class__.__name__ == "King":
                         white_score += 900
+                    elif board.board[row][col].__class__.__name__ == "King":
+                        white_score += 20000
                 else:
                     if board.board[row][col].__class__.__name__ == "Rook":
-                        black_score += 50
+                        black_score += 500
                     elif board.board[row][col].__class__.__name__ == "Pawn":
-                        black_score += 10
+                        black_score += 100
                     elif board.board[row][col].__class__.__name__ == "Bishop":
-                        black_score += 30
+                        black_score += 330 + bishop_list[row][col]
                     elif board.board[row][col].__class__.__name__ == "Knight":
-                        black_score += 30
+                        black_score += 320 + knight_list[row][col]
                     elif board.board[row][col].__class__.__name__ == "Queen":
-                        black_score += 90
-                    elif board.board[row][col].__class__.__name__ == "King":
                         black_score += 900
+                    elif board.board[row][col].__class__.__name__ == "King":
+                        black_score += 20000
     if color == "w":
         return white_score - black_score
     else:
