@@ -17,7 +17,7 @@ PyCharm 2021.3.3
 Python 3.9
 
 02.05.2022
-ver 0.790
+ver 0.800-golden
 """
 
 import game

@@ -1,6 +1,8 @@
+# piece.py
+# python libraries =====================================================================================================
 import pygame
 
-# resources -------------------------------------------------
+# resources ============================================================================================================
 from flowingconfig import *
 b_bishop = pygame.image.load("res/images/b_bishop.png")
 b_king = pygame.image.load("res/images/b_king.png")
@@ -32,15 +34,14 @@ if visual_set != 0:
         w_rook = pygame.image.load("res/images/"+str(visual_set)+"/w_rook.png")
         raw_select = pygame.image.load("res/images/"+str(visual_set)+"/b_select.png")
         raw_select2 = pygame.image.load("res/images/"+str(visual_set)+"/b2_select.png")
-    except:
+    except FileNotFoundError or FileExistsError:
         print("log: custom visual set cannot be loaded")
-
 black_all = [b_bishop, b_king, b_knight, b_pawn, b_queen, b_rook]
 white_all = [w_bishop, w_king, w_knight, w_pawn, w_queen, w_rook]
 black_all_scaled = []
 white_all_scaled = []
 
-# scaling ---------------------------------------------------
+# scaling --------------------------------------------------------------------------------------------------------------
 for piece_img in black_all:
     black_all_scaled.append(pygame.transform.smoothscale(piece_img, (cell_size_x, cell_size_y)))
 for piece_img in white_all:
@@ -49,7 +50,7 @@ scaled_select = pygame.transform.smoothscale(raw_select, (cell_size_x, cell_size
 scaled_select2 = pygame.transform.smoothscale(raw_select2, (cell_size_x, cell_size_y))
 
 
-# piece class -----------------------------------------------
+# piece class ==========================================================================================================
 class Piece:
     piece_img = -1
     start_x = top_left_corner[0]
@@ -107,7 +108,11 @@ class Piece:
     def __str__(self):
         return str(self.col) + str(self.row)
 
+    def valid_moves(self, board):
+        pass
 
+
+# pieces' implementations, inherited ===================================================================================
 class Bishop(Piece):
     piece_img = 0
 
@@ -115,58 +120,56 @@ class Bishop(Piece):
         i = self.row
         j = self.col
         moves = []
-        # TOP RIGHT
         left_strafe = j + 1
         right_strafe = j - 1
-        for di in range(i - 1, -1, -1):
+        for distance in range(i - 1, -1, -1):
             if left_strafe < 8:
-                p = board[di][left_strafe]
+                p = board[distance][left_strafe]
                 if p == 0:
-                    moves.append((left_strafe, di))
+                    moves.append((left_strafe, distance))
                 elif p.color != self.color:
-                    moves.append((left_strafe, di))
+                    moves.append((left_strafe, distance))
                     break
                 else:
                     break
             else:
                 break
             left_strafe += 1
-        for di in range(i - 1, -1, -1):
+        for distance in range(i - 1, -1, -1):
             if right_strafe > -1:
-                p = board[di][right_strafe]
+                p = board[distance][right_strafe]
                 if p == 0:
-                    moves.append((right_strafe, di))
+                    moves.append((right_strafe, distance))
                 elif p.color != self.color:
-                    moves.append((right_strafe, di))
+                    moves.append((right_strafe, distance))
                     break
                 else:
                     break
             else:
                 break
             right_strafe -= 1
-        # TOP LEFT
         left_strafe = j + 1
         right_strafe = j - 1
-        for di in range(i + 1, 8):
+        for distance in range(i + 1, 8):
             if left_strafe < 8:
-                p = board[di][left_strafe]
+                p = board[distance][left_strafe]
                 if p == 0:
-                    moves.append((left_strafe, di))
+                    moves.append((left_strafe, distance))
                 elif p.color != self.color:
-                    moves.append((left_strafe, di))
+                    moves.append((left_strafe, distance))
                     break
                 else:
                     break
             else:
                 break
             left_strafe += 1
-        for di in range(i + 1, 8):
+        for distance in range(i + 1, 8):
             if right_strafe > -1:
-                p = board[di][right_strafe]
+                p = board[distance][right_strafe]
                 if p == 0:
-                    moves.append((right_strafe, di))
+                    moves.append((right_strafe, distance))
                 elif p.color != self.color:
-                    moves.append((right_strafe, di))
+                    moves.append((right_strafe, distance))
                     break
                 else:
                     break
@@ -176,6 +179,7 @@ class Bishop(Piece):
         return moves
 
 
+# ----------------------------------------------------------------------------------------------------------------------
 class King(Piece):
     piece_img = 1
 
@@ -188,20 +192,17 @@ class King(Piece):
         j = self.col
         moves = []
         if i > 0:
-            # TOP LEFT
             if j > 0:
                 p = board[i - 1][j - 1]
                 if p == 0:
                     moves.append((j - 1, i - 1,))
                 elif p.color != self.color:
                     moves.append((j - 1, i - 1,))
-            # TOP MIDDLE
             p = board[i - 1][j]
             if p == 0:
                 moves.append((j, i - 1))
             elif p.color != self.color:
                 moves.append((j, i - 1))
-            # TOP RIGHT
             if j < 7:
                 p = board[i - 1][j + 1]
                 if p == 0:
@@ -209,34 +210,29 @@ class King(Piece):
                 elif p.color != self.color:
                     moves.append((j + 1, i - 1,))
         if i < 7:
-            # BOTTOM LEFT
             if j > 0:
                 p = board[i + 1][j - 1]
                 if p == 0:
                     moves.append((j - 1, i + 1,))
                 elif p.color != self.color:
                     moves.append((j - 1, i + 1,))
-            # BOTTOM MIDDLE
             p = board[i + 1][j]
             if p == 0:
                 moves.append((j, i + 1))
             elif p.color != self.color:
                 moves.append((j, i + 1))
-            # BOTTOM RIGHT
             if j < 7:
                 p = board[i + 1][j + 1]
                 if p == 0:
                     moves.append((j + 1, i + 1))
                 elif p.color != self.color:
                     moves.append((j + 1, i + 1))
-        # MIDDLE LEFT
         if j > 0:
             p = board[i][j - 1]
             if p == 0:
                 moves.append((j - 1, i))
             elif p.color != self.color:
                 moves.append((j - 1, i))
-        # MIDDLE RIGHT
         if j < 7:
             p = board[i][j + 1]
             if p == 0:
@@ -246,6 +242,7 @@ class King(Piece):
         return moves
 
 
+# ----------------------------------------------------------------------------------------------------------------------
 class Knight(Piece):
     piece_img = 2
 
@@ -253,28 +250,24 @@ class Knight(Piece):
         i = self.row
         j = self.col
         moves = []
-        # DOWN LEFT
         if i < 6 and j > 0:
             p = board[i + 2][j - 1]
             if p == 0:
                 moves.append((j - 1, i + 2))
             elif p.color != self.color:
                 moves.append((j - 1, i + 2))
-        # UP LEFT
         if i > 1 and j > 0:
             p = board[i - 2][j - 1]
             if p == 0:
                 moves.append((j - 1, i - 2))
             elif p.color != self.color:
                 moves.append((j - 1, i - 2))
-        # DOWN RIGHT
         if i < 6 and j < 7:
             p = board[i + 2][j + 1]
             if p == 0:
                 moves.append((j + 1, i + 2))
             elif p.color != self.color:
                 moves.append((j + 1, i + 2))
-        # UP RIGHT
         if i > 1 and j < 7:
             p = board[i - 2][j + 1]
             if p == 0:
@@ -308,6 +301,8 @@ class Knight(Piece):
         return moves
 
 
+# ----------------------------------------------------------------------------------------------------------------------
+# noinspection PyBroadException
 class Pawn(Piece):
     piece_img = 3
 
@@ -327,7 +322,6 @@ class Pawn(Piece):
                     p = board[i + 1][j]
                     if p == 0:
                         moves.append((j, i + 1))
-                    # DIAGONAL
                     if j < 7:
                         p = board[i + 1][j + 1]
                         if p != 0:
@@ -346,7 +340,6 @@ class Pawn(Piece):
                             moves.append((j, i + 1))
                         if p == 0 and p1 == 0:
                             moves.append((j, i + 2))
-            # WHITE
             else:
                 if i > 0:
                     p = board[i - 1][j]
@@ -371,10 +364,12 @@ class Pawn(Piece):
                         if p == 0 and p1 == 0:
                             moves.append((j, i - 2))
         except:
-            pass
+            print("log: unknown pawn problem")
+            return []
         return moves
 
 
+# ----------------------------------------------------------------------------------------------------------------------
 class Queen(Piece):
     piece_img = 4
 
@@ -382,57 +377,54 @@ class Queen(Piece):
         i = self.row
         j = self.col
         moves = []
-        # TOP RIGHT
         left_strafe = j + 1
         right_strafe = j - 1
-        for di in range(i - 1, -1, -1):
+        for distance in range(i - 1, -1, -1):
             if left_strafe < 8:
-                p = board[di][left_strafe]
+                p = board[distance][left_strafe]
                 if p == 0:
-                    moves.append((left_strafe, di))
+                    moves.append((left_strafe, distance))
                 elif p.color != self.color:
-                    moves.append((left_strafe, di))
+                    moves.append((left_strafe, distance))
                     break
                 else:
                     left_strafe = 9
             left_strafe += 1
-        for di in range(i - 1, -1, -1):
+        for distance in range(i - 1, -1, -1):
             if right_strafe > -1:
-                p = board[di][right_strafe]
+                p = board[distance][right_strafe]
                 if p == 0:
-                    moves.append((right_strafe, di))
+                    moves.append((right_strafe, distance))
                 elif p.color != self.color:
-                    moves.append((right_strafe, di))
+                    moves.append((right_strafe, distance))
                     break
                 else:
                     right_strafe = -1
             right_strafe -= 1
-        # TOP LEFT
         left_strafe = j + 1
         right_strafe = j - 1
-        for di in range(i + 1, 8):
+        for distance in range(i + 1, 8):
             if left_strafe < 8:
-                p = board[di][left_strafe]
+                p = board[distance][left_strafe]
                 if p == 0:
-                    moves.append((left_strafe, di))
+                    moves.append((left_strafe, distance))
                 elif p.color != self.color:
-                    moves.append((left_strafe, di))
+                    moves.append((left_strafe, distance))
                     break
                 else:
                     left_strafe = 9
             left_strafe += 1
-        for di in range(i + 1, 8):
+        for distance in range(i + 1, 8):
             if right_strafe > -1:
-                p = board[di][right_strafe]
+                p = board[distance][right_strafe]
                 if p == 0:
-                    moves.append((right_strafe, di))
+                    moves.append((right_strafe, distance))
                 elif p.color != self.color:
-                    moves.append((right_strafe, di))
+                    moves.append((right_strafe, distance))
                     break
                 else:
                     right_strafe = -1
             right_strafe -= 1
-        # UP
         for x in range(i - 1, -1, -1):
             p = board[x][j]
             if p == 0:
@@ -442,7 +434,6 @@ class Queen(Piece):
                 break
             else:
                 break
-        # DOWN
         for x in range(i + 1, 8, 1):
             p = board[x][j]
             if p == 0:
@@ -452,7 +443,6 @@ class Queen(Piece):
                 break
             else:
                 break
-        # LEFT
         for x in range(j - 1, -1, -1):
             p = board[i][x]
             if p == 0:
@@ -462,7 +452,6 @@ class Queen(Piece):
                 break
             else:
                 break
-        # RIGHT
         for x in range(j + 1, 8, 1):
             p = board[i][x]
             if p == 0:
@@ -475,6 +464,7 @@ class Queen(Piece):
         return moves
 
 
+# ----------------------------------------------------------------------------------------------------------------------
 class Rook(Piece):
     piece_img = 5
 
@@ -482,7 +472,6 @@ class Rook(Piece):
         i = self.row
         j = self.col
         moves = []
-        # UP
         for x in range(i - 1, -1, -1):
             p = board[x][j]
             if p == 0:
@@ -492,7 +481,6 @@ class Rook(Piece):
                 break
             else:
                 break
-        # DOWN
         for x in range(i + 1, 8, 1):
             p = board[x][j]
             if p == 0:
@@ -502,7 +490,6 @@ class Rook(Piece):
                 break
             else:
                 break
-        # LEFT
         for x in range(j - 1, -1, -1):
             p = board[i][x]
             if p == 0:
@@ -512,7 +499,6 @@ class Rook(Piece):
                 break
             else:
                 break
-        # RIGHT
         for x in range(j + 1, 8, 1):
             p = board[i][x]
             if p == 0:

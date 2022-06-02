@@ -1,4 +1,4 @@
-# defaults
+# defaults -------------------------------------------------------------------------------------------------------------
 # rate of screen update [it is not recommended to change]
 fps_max = 36
 # window width and height [free change]
@@ -11,21 +11,20 @@ game_mode = 0
 # 0 - random
 # 1 - evaluation
 # 2 - minimax (released in build 800)
-# 3 - advanced minimax (released in build 900)
+# 3 - advanced minimax (released in build 800)
 difficulty = 0
 # padding size, distance between board and the window border [it is not recommended to change]
 padding_absolute = 130
 # visual set (released in build 800) [free change]
 visual_set = 0
 # timer for each person (in minutes) [free change]
-time_restriction = 20
+time_restriction = 15
 # size increment [it is not recommended to change]
-pop_increasing_size = 60
+pop_increasing_size = 65
 # time before game starts [it is not recommended to change]
-freeze_time = 5
+freeze_time = 3
 
-# reading from file
-
+# reading from file ----------------------------------------------------------------------------------------------------
 try:
     f = open("config.txt")
     lines = f.readlines()
@@ -33,11 +32,11 @@ try:
         name = str(line.split("=")[0])
         var = int(line.split("=")[1])
         locals()[name] = var
-except:
-    print("log: config file is corrupted, does not exist or is unreadable")
+except FileExistsError or FileNotFoundError or TypeError or AttributeError:
+    print("log: config file is corrupted, does not exist or is unreadable, possibly parsing error")
     pass
 
-# static and calculated values
+# static and calculated values -----------------------------------------------------------------------------------------
 height = width
 padding_abs_half = padding_absolute // 2
 top_left_corner = (padding_abs_half, padding_abs_half)

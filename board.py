@@ -1,14 +1,18 @@
+# board.py
+# project libraries ====================================================================================================
 from piece import Bishop, King, Knight, Rook, Queen, Pawn
 
 
+# chessboard class =====================================================================================================
+# noinspection PyTypeChecker
 class Board:
     def __init__(self, rows, cols):
         self.rows = rows
         self.cols = cols
         self.board = [[0 for _ in range(8)] for _ in range(8)]
-        self.set_start()
+        self.set_start_normal()
 
-    def set_start(self):
+    def set_start_normal(self):
         self.board[0][0] = Rook(0, 0, "b")
         self.board[0][1] = Knight(0, 1, "b")
         self.board[0][2] = Bishop(0, 2, "b")
@@ -31,6 +35,7 @@ class Board:
         for line in range(0, 8):
             self.board[6][line] = Pawn(6, line, "w")
 
+# functions ============================================================================================================
     def update_moves(self):
         for i in range(self.rows):
             for j in range(self.cols):
@@ -61,6 +66,7 @@ class Board:
                     if self.board[i][j].pawn:
                         self.board[i][j] = 0
                         self.board[i][j] = Queen(i, j, color)
+                        print("log: pawn to queen", color)
         if color == "b":
             i = 7
             for j in range(0, 8):
@@ -68,6 +74,7 @@ class Board:
                     if self.board[i][j].pawn:
                         self.board[i][j] = 0
                         self.board[i][j] = Queen(i, j, color)
+                        print("log: pawn to queen", color)
 
     def is_checked(self, color):
         self.update_moves()
@@ -79,33 +86,33 @@ class Board:
                     if self.board[i][j].king and self.board[i][j].color == color:
                         king_pos = (j, i)
         if king_pos in danger_moves:
+            print("log: checked", color)
             return True
         return False
 
     def select(self, col, row, color):
-        prev = (-1, -1)
+        previous_select = (-1, -1)
         changed = False
-        # print("log:", col, row)
         for i in range(self.rows):
             for j in range(self.cols):
                 if self.board[i][j] != 0:
                     if self.board[i][j].selected:
-                        prev = (i, j)
-        if self.board[row][col] == 0 and prev != (-1, -1):
-            moves = self.board[prev[0]][prev[1]].move_list
+                        previous_select = (i, j)
+        if self.board[row][col] == 0 and previous_select != (-1, -1):
+            moves = self.board[previous_select[0]][previous_select[1]].move_list
             if (col, row) in moves:
-                changed = self.move(prev, (row, col), color)
+                changed = self.move(previous_select, (row, col), color)
             self.reset_selected()
         else:
-            if prev == (-1, -1):
+            if previous_select == (-1, -1):
                 self.reset_selected()
                 if self.board[row][col] != 0 and self.board[row][col].color == color:
                     self.board[row][col].selected = True
             else:
-                if self.board[prev[0]][prev[1]].color != self.board[row][col].color:
-                    moves = self.board[prev[0]][prev[1]].move_list
+                if self.board[previous_select[0]][previous_select[1]].color != self.board[row][col].color:
+                    moves = self.board[previous_select[0]][previous_select[1]].move_list
                     if (col, row) in moves:
-                        changed = self.move(prev, (row, col), color)
+                        changed = self.move(previous_select, (row, col), color)
                     self.reset_selected()
                     if self.board[row][col].color == color:
                         self.board[row][col].selected = True
@@ -121,6 +128,7 @@ class Board:
                 if self.board[i][j] != 0:
                     self.board[i][j].selected = False
 
+# 'move' for player ----------------------------------------------------------------------------------------------------
     def move(self, src, dst, color):
         checked_before = self.is_checked(color)
         changed = True
@@ -147,6 +155,7 @@ class Board:
         self.update_moves()
         return changed
 
+# 'move' for chess algorithm -------------------------------------------------------------------------------------------
     def simple_move(self, src, dst, color):
         new_board = self.board[:]
         if new_board[src[0]][src[1]].pawn:
