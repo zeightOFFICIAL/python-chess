@@ -99,7 +99,8 @@ class Board:
                     if self.board[i][j].selected:
                         previous_select = (i, j)
         if self.board[row][col] == 0 and previous_select != (-1, -1):
-            moves = self.board[previous_select[0]][previous_select[1]].move_list
+            moves = self.board[previous_select[0]
+                               ][previous_select[1]].move_list
             if (col, row) in moves:
                 changed = self.move(previous_select, (row, col), color)
             self.reset_selected()
@@ -110,7 +111,8 @@ class Board:
                     self.board[row][col].selected = True
             else:
                 if self.board[previous_select[0]][previous_select[1]].color != self.board[row][col].color:
-                    moves = self.board[previous_select[0]][previous_select[1]].move_list
+                    moves = self.board[previous_select[0]
+                                       ][previous_select[1]].move_list
                     if (col, row) in moves:
                         changed = self.move(previous_select, (row, col), color)
                     self.reset_selected()

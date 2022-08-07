@@ -20,20 +20,28 @@ raw_select = pygame.image.load("res/images/b_select.png")
 raw_select2 = pygame.image.load("res/images/b2_select.png")
 if visual_set != 0:
     try:
-        b_bishop = pygame.image.load("res/images/"+str(visual_set)+"/b_bishop.png")
+        b_bishop = pygame.image.load(
+            "res/images/"+str(visual_set)+"/b_bishop.png")
         b_king = pygame.image.load("res/images/"+str(visual_set)+"/b_king.png")
-        b_knight = pygame.image.load("res/images/"+str(visual_set)+"/b_knight.png")
+        b_knight = pygame.image.load(
+            "res/images/"+str(visual_set)+"/b_knight.png")
         b_pawn = pygame.image.load("res/images/"+str(visual_set)+"/b_pawn.png")
-        b_queen = pygame.image.load("res/images/"+str(visual_set)+"/b_queen.png")
+        b_queen = pygame.image.load(
+            "res/images/"+str(visual_set)+"/b_queen.png")
         b_rook = pygame.image.load("res/images/"+str(visual_set)+"/b_rook.png")
-        w_bishop = pygame.image.load("res/images/"+str(visual_set)+"/w_bishop.png")
+        w_bishop = pygame.image.load(
+            "res/images/"+str(visual_set)+"/w_bishop.png")
         w_king = pygame.image.load("res/images/"+str(visual_set)+"/w_king.png")
-        w_knight = pygame.image.load("res/images/"+str(visual_set)+"/w_knight.png")
+        w_knight = pygame.image.load(
+            "res/images/"+str(visual_set)+"/w_knight.png")
         w_pawn = pygame.image.load("res/images/"+str(visual_set)+"/w_pawn.png")
-        w_queen = pygame.image.load("res/images/"+str(visual_set)+"/w_queen.png")
+        w_queen = pygame.image.load(
+            "res/images/"+str(visual_set)+"/w_queen.png")
         w_rook = pygame.image.load("res/images/"+str(visual_set)+"/w_rook.png")
-        raw_select = pygame.image.load("res/images/"+str(visual_set)+"/b_select.png")
-        raw_select2 = pygame.image.load("res/images/"+str(visual_set)+"/b2_select.png")
+        raw_select = pygame.image.load(
+            "res/images/"+str(visual_set)+"/b_select.png")
+        raw_select2 = pygame.image.load(
+            "res/images/"+str(visual_set)+"/b2_select.png")
     except FileNotFoundError or FileExistsError:
         print("log: custom visual set cannot be loaded")
 black_all = [b_bishop, b_king, b_knight, b_pawn, b_queen, b_rook]
@@ -43,11 +51,15 @@ white_all_scaled = []
 
 # scaling --------------------------------------------------------------------------------------------------------------
 for piece_img in black_all:
-    black_all_scaled.append(pygame.transform.smoothscale(piece_img, (cell_size_x, cell_size_y)))
+    black_all_scaled.append(pygame.transform.smoothscale(
+        piece_img, (cell_size_x, cell_size_y)))
 for piece_img in white_all:
-    white_all_scaled.append(pygame.transform.smoothscale(piece_img, (cell_size_x, cell_size_y)))
-scaled_select = pygame.transform.smoothscale(raw_select, (cell_size_x, cell_size_y))
-scaled_select2 = pygame.transform.smoothscale(raw_select2, (cell_size_x, cell_size_y))
+    white_all_scaled.append(pygame.transform.smoothscale(
+        piece_img, (cell_size_x, cell_size_y)))
+scaled_select = pygame.transform.smoothscale(
+    raw_select, (cell_size_x, cell_size_y))
+scaled_select2 = pygame.transform.smoothscale(
+    raw_select2, (cell_size_x, cell_size_y))
 
 
 # piece class ==========================================================================================================
@@ -80,12 +92,16 @@ class Piece:
         if self.selected:
             moves = self.move_list
             for move in moves:
-                x = self.start_x + (move[0] * bottom_right_corner[0] / 8) + (cell_size_y // 2)
-                y = self.start_y + (move[1] * bottom_right_corner[1] / 8) + (cell_size_y // 2)
+                x = self.start_x + \
+                    (move[0] * bottom_right_corner[0] / 8) + (cell_size_y // 2)
+                y = self.start_y + \
+                    (move[1] * bottom_right_corner[1] / 8) + (cell_size_y // 2)
                 if self.color == "w":
-                    win.blit(scaled_select, (x - cell_size_x / 2, y - cell_size_y / 2))
+                    win.blit(scaled_select,
+                             (x - cell_size_x / 2, y - cell_size_y / 2))
                 if self.color == 'b':
-                    win.blit(scaled_select2, (x - cell_size_x / 2, y - cell_size_y / 2))
+                    win.blit(scaled_select2,
+                             (x - cell_size_x / 2, y - cell_size_y / 2))
         x = self.start_x + (self.col * bottom_right_corner[0] / 8)
         y = self.start_y + (self.row * bottom_right_corner[1] / 8)
         if self.selected:
@@ -97,7 +113,8 @@ class Piece:
                 this_piece_img = pygame.transform.smoothscale(black_all[self.piece_img],
                                                               (cell_size_y + pop_increasing_size,
                                                                cell_size_y + pop_increasing_size))
-            win.blit(this_piece_img, (x - pop_increasing_size / 2, y - pop_increasing_size / 2))
+            win.blit(this_piece_img, (x - pop_increasing_size /
+                     2, y - pop_increasing_size / 2))
         else:
             win.blit(this_piece_img, (x, y))
 
