@@ -21,7 +21,7 @@ fully compatible with:
 Python 3.6.9
 
 08.08.2022
-ver 902
+ver 903
 """
 
 import game

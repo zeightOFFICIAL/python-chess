@@ -1,6 +1,6 @@
 # defaults -------------------------------------------------------------------------------------------------------------
 # rate of screen update [it is not recommended to change]
-fps_max = 36
+fps_max = 60
 # window width and height [free change]
 width = 750
 # game mode [free change]
@@ -36,6 +36,7 @@ except (FileExistsError, AttributeError, ValueError) as e:
     print("log: config file is corrupted, does not exist or is unreadable, possibly parsing error")
 
 # static and calculated values -----------------------------------------------------------------------------------------
+time_restriction = 15 if time_restriction > 60 * 1000 else time_restriction
 height = width
 padding_abs_half = padding_absolute // 2
 top_left_corner = (padding_abs_half, padding_abs_half)
