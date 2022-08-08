@@ -32,9 +32,8 @@ try:
         name = str(line.split("=")[0])
         var = int(line.split("=")[1])
         locals()[name] = var
-except FileExistsError or FileNotFoundError or TypeError or AttributeError:
+except (FileExistsError, AttributeError, ValueError) as e:
     print("log: config file is corrupted, does not exist or is unreadable, possibly parsing error")
-    pass
 
 # static and calculated values -----------------------------------------------------------------------------------------
 height = width

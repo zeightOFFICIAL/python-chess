@@ -76,7 +76,7 @@ class Solution:
             return self.random_choice(color)
         return best_move
 
-# diff. 2 minimax depth 2, simple evaluation ---------------------------------------------------------------------------
+# diff. 2 minimax depth 2, advanced evaluation -------------------------------------------------------------------------
     def tier2_choice(self, color):
         def minimaxdepth2(original_color):
             max_value = -inf
@@ -97,10 +97,10 @@ class Solution:
                                 new_board_2 = copy.deepcopy(new_board_1)
                                 new_board_2.simple_move((piece_2.row, piece_2.col), (move_2[1], move_2[0]),
                                                         "w" if original_color == "b" else "b")
-                                if evaluate_board(new_board_2, original_color) < min_value:
-                                    min_value = evaluate_board(
+                                if evaluate_board_advanced(new_board_2, original_color) < min_value:
+                                    min_value = evaluate_board_advanced(
                                         new_board_2, original_color)
-                        total_value = evaluate_board(
+                        total_value = evaluate_board_advanced(
                             new_board_1, original_color) + min_value
                         if total_value > max_value:
                             max_value = total_value
@@ -123,11 +123,11 @@ class Solution:
                         if best_value == -inf:
                             best_move = (
                                 piece.row, piece.col), (move[0], move[1])
-                            best_value = evaluate_board(new_board, color)
-                        elif evaluate_board(new_board, color) > best_value:
+                            best_value = evaluate_board_advanced(new_board, color)
+                        elif evaluate_board_advanced(new_board, color) > best_value:
                             best_move = (
                                 piece.row, piece.col), (move[0], move[1])
-                            best_value = evaluate_board(new_board, color)
+                            best_value = evaluate_board_advanced(new_board, color)
             return best_move
         else:
             best_move = minimaxdepth2(color)
@@ -200,11 +200,11 @@ class Solution:
                         if best_value == -inf:
                             best_move = (
                                 piece.row, piece.col), (move[0], move[1])
-                            best_value = evaluate_board(new_board, color)
-                        elif evaluate_board(new_board, color) > best_value:
+                            best_value = evaluate_board_advanced(new_board, color)
+                        elif evaluate_board_advanced(new_board, color) > best_value:
                             best_move = (
                                 piece.row, piece.col), (move[0], move[1])
-                            best_value = evaluate_board(new_board, color)
+                            best_value = evaluate_board_advanced(new_board, color)
             return best_move
         else:
             best_move = root_minimax(self.board, 3, True)

@@ -1,4 +1,4 @@
-# ver 901
+# ver 902
 # game.py
 # python libraries =====================================================================================================
 import sys
@@ -6,17 +6,17 @@ import pygame
 import time
 
 # project libraries ====================================================================================================
-from board import Board
-from algorithm import Solution
+from gameobjects.board import Board
+from scripts.algorithm import Solution
 
 # resources ============================================================================================================
-from flowingconfig import *
-raw_board = pygame.image.load("res/images/eq_chessboard.png")
-icon = pygame.image.load("res/images/icon.png")
+from configuration.flowingconfig import *
+raw_board = pygame.image.load("resources/images/eq_chessboard.png")
+icon = pygame.image.load("resources/images/icon.png")
 if visual_set != 0:
     try:
         raw_board = pygame.image.load(
-            "res/images/"+str(visual_set)+"/eq_chessboard.png")
+            "resources/images/"+str(visual_set)+"/eq_chessboard.png")
     except FileNotFoundError or FileExistsError:
         print("log: custom visual set cannot be loaded")
 board = pygame.transform.smoothscale(

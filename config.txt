@@ -1,3 +1,4 @@
 game_mode=1
 difficulty=2
 width=600
+visual_set=1

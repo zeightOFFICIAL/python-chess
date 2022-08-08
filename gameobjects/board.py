@@ -1,6 +1,6 @@
 # board.py
 # project libraries ====================================================================================================
-from piece import Bishop, King, Knight, Rook, Queen, Pawn
+from gameobjects.piece import Bishop, King, Knight, Rook, Queen, Pawn
 
 
 # chessboard class =====================================================================================================
