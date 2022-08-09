@@ -1,8 +1,6 @@
-# ver 905
+# ver 906
 # flowingconfig.py
 # python libraries =====================================================================================================
-from cmath import log
-from pickle import NONE
 from screeninfo import get_monitors
 import logging
 
@@ -11,19 +9,21 @@ import logging
 debug_mode = 1
 if debug_mode == 1:
     logging.basicConfig(
-    format='log:%(levelname)s:%(filename)s:%(lineno)d - %(message)s', level=logging.DEBUG)
+        format='log:%(levelname)s:%(filename)s:%(lineno)d - %(message)s', level=logging.DEBUG)
 # rate of screen update [should not be changed]
 fps_max = 60
 # window width and height [changeable, adjustible]
-# if auto-detection works - its height=width is equal to display height
+# if auto-detection works - its height=width is equal to display height minus 90
 try:
     for display in get_monitors():
         if display.is_primary:
             width = display.height
-            logging.info("Auto-detection of screen height: Detected screen height: %d", width)
+            logging.debug(
+                "auto-detection of screen height: Detected screen height: %d", width)
             width -= 90
 except:
-    print("log (flowingconfig.py:width): Screen's height auto-detection failed. Applying default.")
+    logging.debug(
+        "auto-detection of screen height: Screen's height auto-detection failed. Applying default.")
     width = 600
 # game mode [changeable]
 # 0 - PvP
@@ -32,8 +32,8 @@ game_mode = 0
 # if game mode is 1, then difficulty determines algorithms complexity [changeable]
 # 0 - random
 # 1 - evaluation
-# 2 - minimax (released in build 800)
-# 3 - advanced minimax (released in build 800)
+# 2 - minimax (released in build 800, adjusted in 910)
+# 3 - advanced minimax (released in build 800, adjusted in 910)
 difficulty = 0
 # padding size, distance between board and the window border [should not be changed]
 padding_absolute = 130
@@ -52,9 +52,11 @@ try:
         name = str(line.split("=")[0])
         var = int(line.split("=")[1])
         locals()[name] = var
-        logging.debug("reading config: Assign value %d to parameter %s", var, name)
+        logging.debug(
+            "reading config: Assign value %d to parameter %s", var, name)
 except (FileExistsError, AttributeError, ValueError) as e:
-    logging.warning("reading config: Config file is corrupted, does not exist or is unreadable, possibly parsing error.\nNot parsed values are set to default.")
+    logging.warning(
+        "reading config: Config file is corrupted, does not exist or is unreadable, possibly parsing error.\nNot parsed values are set to default.")
 
 # static and calculated values -----------------------------------------------------------------------------------------
 time_restriction = 15 if time_restriction > 60 * 1000 else time_restriction

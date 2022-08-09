@@ -1,10 +1,9 @@
-# ver 905
+# ver 906
 # game.py
 # libraries ============================================================================================================
 from sys import exit
 from time import time
 import pygame
-import logging
 # ----------------------------------------------------------------------------------------------------------------------
 from configuration.flowingconfig import *
 from scripts.algorithm import Solution
@@ -228,7 +227,6 @@ def main():
                         (piecex, piecey), (choice[1], choice[0]), "b")
                     change = True
                 except TypeError:
-                    print((piecex, piecey), (choice[1], choice[0]))
                     logging.warning(
                         "Main: Type error. White wins. It's either critical script failure or true winning condition. Typical crutch)))\nAt turn %c.%d", turn_color, turn_number)
                     end_screen("White Wins!", time() - start_time)

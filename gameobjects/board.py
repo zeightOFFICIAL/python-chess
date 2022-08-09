@@ -1,7 +1,13 @@
-# ver 904
+# ver 906
 # board.py
 # project libraries ====================================================================================================
 from gameobjects.piece import Bishop, King, Knight, Rook, Queen, Pawn
+from configuration.flowingconfig import *
+
+# setting up debug =====================================================================================================
+if debug_mode == 1:
+    logging.basicConfig(
+        format='log:%(levelname)s:%(filename)s:%(lineno)d - %(message)s', level=logging.DEBUG)
 
 
 # chessboard class =====================================================================================================
@@ -67,7 +73,8 @@ class Board:
                     if self.board[i][j].pawn:
                         self.board[i][j] = 0
                         self.board[i][j] = Queen(i, j, color)
-                        print("log: pawn to queen", color)
+                        logging.debug(
+                            "pawn to queen: Pawn at the end (%d, %d) changed to %s-queen", i, j, color)
         if color == "b":
             i = 7
             for j in range(0, 8):
@@ -75,7 +82,8 @@ class Board:
                     if self.board[i][j].pawn:
                         self.board[i][j] = 0
                         self.board[i][j] = Queen(i, j, color)
-                        print("log: pawn to queen", color)
+                        logging.debug(
+                            "pawn to queen: Pawn at the end (%d, %d) changed to %s-queen", i, j, color)
 
     def is_checked(self, color):
         self.update_moves()
@@ -87,7 +95,8 @@ class Board:
                     if self.board[i][j].king and self.board[i][j].color == color:
                         king_pos = (j, i)
         if king_pos in danger_moves:
-            print("log: checked", color)
+            logging.debug(
+                "checked: %s-king is under check at (%d, %d)", color, king_pos[0], king_pos[1])
             return True
         return False
 
@@ -136,6 +145,12 @@ class Board:
         checked_before = self.is_checked(color)
         changed = True
         new_board = self.board[:]
+        if new_board[src[0]][src[1]].pawn:
+            new_board[src[0]][src[1]].first = False
+        new_board[src[0]][src[1]].change_pos((dst[0], dst[1]))
+        new_board[dst[0]][dst[1]] = new_board[src[0]][src[1]]
+        new_board[src[0]][src[1]] = 0
+        self.board = new_board
         if self.is_checked(color) and not (checked_before and self.is_checked(color)):
             changed = False
             new_board = self.board[:]
@@ -148,12 +163,6 @@ class Board:
             self.board = new_board
         else:
             self.reset_selected()
-        if new_board[src[0]][src[1]].pawn:
-            new_board[src[0]][src[1]].first = False
-        new_board[src[0]][src[1]].change_pos((dst[0], dst[1]))
-        new_board[dst[0]][dst[1]] = new_board[src[0]][src[1]]
-        new_board[src[0]][src[1]] = 0
-        self.board = new_board
         self.is_attheend(color)
         self.update_moves()
         return changed
