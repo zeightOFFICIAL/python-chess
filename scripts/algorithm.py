@@ -1,4 +1,4 @@
-# ver 901
+# ver 905
 # python libraries =====================================================================================================
 import copy
 import random
@@ -35,10 +35,10 @@ class Solution:
                         all_moves.append(
                             ((piece.row, piece.col), (move[0], move[1])))
         if was_checked:
-            return -1
+            return -100
         else:
             if len(all_moves) <= 0:
-                return -1
+                return -100
             return random.choice(all_moves)
 
 # diff. 1 evaluation ---------------------------------------------------------------------------------------------------

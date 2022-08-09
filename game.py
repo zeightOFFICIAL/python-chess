@@ -1,17 +1,21 @@
-# ver 904
+# ver 905
 # game.py
-# python libraries =====================================================================================================
-import sys
+# libraries ============================================================================================================
+from sys import exit
+from time import time
 import pygame
-import time
 import logging
-
-# project libraries ====================================================================================================
-from gameobjects.board import Board
+# ----------------------------------------------------------------------------------------------------------------------
+from configuration.flowingconfig import *
 from scripts.algorithm import Solution
+from gameobjects.board import Board
+
+# setting up debug =====================================================================================================
+if debug_mode == 1:
+    logging.basicConfig(
+        format='log:%(levelname)s:%(filename)s:%(lineno)d - %(message)s', level=logging.DEBUG)
 
 # resources ============================================================================================================
-from configuration.flowingconfig import *
 raw_board = pygame.image.load("resources/images/eq_chessboard.png")
 icon = pygame.image.load("resources/icons/icon.png")
 if visual_set != 0:
@@ -19,11 +23,12 @@ if visual_set != 0:
         raw_board = pygame.image.load(
             "resources/images/"+str(visual_set)+"/eq_chessboard.png")
     except (FileNotFoundError, FileExistsError) as e:
-        logging.warning("(game.py in resources loading): Custom visual set cannot be loaded. Partly or entirely.")
+        logging.warning(
+            "Resources loading: Custom visual set cannot be loaded. Partly or entirely.")
 scaled_board = pygame.transform.smoothscale(
     raw_board, (width - padding_absolute, height - padding_absolute))
 
-# setting up fonts and logging =========================================================================================
+# setting up fonts =====================================================================================================
 pygame.font.init()
 player_time_font = pygame.font.SysFont("console", int(width*0.022))
 king_condition_font = pygame.font.SysFont("console", int(width*0.033))
@@ -32,7 +37,7 @@ time_text_font = pygame.font.SysFont("arial", int(width*0.04), bold=True)
 help_text_font = pygame.font.SysFont("arial", int(width*0.026), bold=True)
 secondary_help_font = pygame.font.SysFont("arial", int(width*0.04), bold=True)
 primal_help_font = pygame.font.SysFont("arial", int(width*0.053), bold=True)
-logging.basicConfig(format='log:%(levelname)s:%(message)s', level=logging.DEBUG)
+
 
 # functions ============================================================================================================
 # FUNCTION to redraw the gamewindow. renders the new one from scrap, and updates
@@ -66,7 +71,6 @@ def redraw_gamewindow(board_to_render, player1_time, player2_time, state_white, 
 # FUNCTION to render last (end) screen. Displays time of game and the winner.
 def end_screen(text, total_time):
     total_time = int(total_time)
-    format_time = str(total_time // 60) + ":" + str(total_time % 60)
     format_time = f'{total_time // 60:d}:{total_time % 60:02d}'
     text_render = main_text_font.render(text, True, (255, 0, 0))
     text_time = time_text_font.render(format_time, True, (255, 0, 0))
@@ -85,14 +89,16 @@ def end_screen(text, total_time):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                sys.exit()
+                exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
-                    logging.debug("(game.py in end_screen): Quit button is pressed.")
+                    logging.debug(
+                        "End screen: Quit button is pressed.")
                     pygame.quit()
-                    sys.exit()
+                    exit()
                 if event.key == pygame.K_r:
-                    logging.debug("(game.py in end_screen): Restart button is pressed.")
+                    logging.debug(
+                        "End screen: Restart button is pressed.")
                     main()
 
 
@@ -119,11 +125,12 @@ def start_screen():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                sys.exit()
+                exit()
             if event.type == pygame.USEREVENT + 1:
                 run = False
 
 
+# FUNCTION to process mouse click on the screen.
 def click(pos):
     x = pos[0]
     y = pos[1]
@@ -133,20 +140,23 @@ def click(pos):
             divy = y - top_left_corner[0]
             i = int(divx / (bottom_right_corner[0] / 8))
             j = int(divy / (bottom_right_corner[1] / 8))
-            logging.debug("(game.py in click): Clicked at position: (x=%d, y=%d), at cell (w=%d, h=%d)", x, y, i, j)
+            logging.debug(
+                "Click: Clicked at position: (x = %d, y = %d), at cell (w = %d, h = %d)", x, y, i, j)
             return i, j
     else:
-        logging.debug("(game.py in click): Clicked at position: (x=%d, y=%d). Not at the cell.", x, y)
+        logging.debug(
+            "Click: Clicked at position: (x = %d, y = %d), not at the cell.", x, y)
 
 
 # main -----------------------------------------------------------------------------------------------------------------
 def main():
-    logging.info("(game.py in main at start): Game started: %d, %d, %d", game_mode, difficulty, time_restriction)
+    logging.debug("Main: Game started: %d-%d, %d",
+                  game_mode, difficulty, time_restriction)
     white_time, black_time = time_restriction_seconds, time_restriction_seconds
-    wide_timer, start_time = time.time(), time.time()
+    wide_timer, start_time = time(), time()
     statewhite, stateblack = 0, 0
     white_wants_draw, black_wants_draw = 0, 0
-    turn = "w"
+    turn_color = "w"
     turn_number = 0
     game_board = Board(8, 8)
     game_board.update_moves()
@@ -154,119 +164,115 @@ def main():
     clock = pygame.time.Clock()
     while run:
         clock.tick(fps_max)
-        
-        if turn == "w":
-            white_time -= (time.time() - wide_timer)
+        if turn_color == "w":
+            white_time -= (time() - wide_timer)
             if white_time <= 0:
-                end_screen("Black Wins!", time.time() - start_time)
-                logging.info("(game.py in main): White out of time.")
+                end_screen("Black Wins!", time() - start_time)
+                logging.debug(
+                    "Main: Black wins. Bcs. white out of time. Turn: %d", turn_number)
         else:
-            black_time -= (time.time() - wide_timer)
+            black_time -= (time() - wide_timer)
             if black_time <= 0:
-                end_screen("White Wins!", time.time() - start_time)
-                logging.info("(game.py in main): Black out of time.")
-        wide_timer = time.time()
+                end_screen("White Wins!", time() - start_time)
+                logging.debug(
+                    "Main: White wins. Bcs. black out of time. Turn: %d", turn_number)
+        wide_timer = time()
         redraw_gamewindow(game_board, int(white_time), int(
             black_time), statewhite, stateblack)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                logging.warning("Main: App closed. Maybe unintentionally.")
                 pygame.quit()
-                sys.exit()
+                exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
-                    logging.debug("(game.py in main): Quit button is pressed.")
+                    logging.debug("Main: Quit button is pressed.")
                     pygame.quit()
-                    sys.exit()
+                    exit()
                 if event.key == pygame.K_s:
-                    logging.debug("(game.py in main): Surrender button is pressed by %c", turn)
-                    if turn == "w":
-                        end_screen("Black Wins!", time.time() - start_time)
+                    logging.debug(
+                        "Main: Surrender button is pressed by %c at turn: %d", turn_color, turn_number)
+                    if turn_color == "w":
+                        end_screen("Black Wins!", time() - start_time)
                     else:
-                        end_screen("White Wins!", time.time() - start_time)
+                        end_screen("White Wins!", time() - start_time)
                 if event.key == pygame.K_p:
-                    if turn == "w":
+                    if turn_color == "w":
                         white_wants_draw = 1 if white_wants_draw == 0 else 0
-                    if turn == "b":
+                    if turn_color == "b":
                         black_wants_draw = 1 if black_wants_draw == 0 else 0
-                    logging.info("(game.py in main): White wants draw? - %b", bool(white_wants_draw))
-                    logging.info("(game.py in main): White wants draw? - %b", bool(black_wants_draw))
+                    logging.debug(
+                        "Main: White wants draw? - %s", bool(white_wants_draw))
+                    logging.debug(
+                        "Main: Black wants draw? - %s", bool(black_wants_draw))
                     if black_wants_draw and white_wants_draw:
-                        logging.debug("(game.py in main): Draw.")
-                        end_screen("Draw!", time.time() - start_time)
+                        logging.debug("Main: Draw.")
+                        end_screen("Draw!", time() - start_time)
 # game mode = 1. BLACK - AI, WHITE - PLAYER. ---------------------------------------------------------------------------
-            if turn == "b" and game_mode == 1:
+            if turn_color == "b" and game_mode == 1:
                 if statewhite == 1:
-                    end_screen("Black Wins!", time.time() - start_time)
-                    logging.debug("game.py in main): Black wins. White ended its turn with checked king.")                    
+                    end_screen("Black Wins!", time() - start_time)
+                    logging.debug(
+                        "Main: Black wins. White ended its turn with checked king. At turn: %d", turn_number)
                 change = False
                 solve = Solution(game_board)
                 try:
-                    (piecex, piecey), choice = solve.random_choice(turn)
+                    (piecex, piecey), choice = solve.random_choice(turn_color)
                     if difficulty == 1:
-                        (piecex, piecey), choice = solve.tier3_choice(turn)
+                        (piecex, piecey), choice = solve.tier3_choice(turn_color)
                     elif difficulty == 2:
-                        (piecex, piecey), choice = solve.tier2_choice(turn)
+                        (piecex, piecey), choice = solve.tier2_choice(turn_color)
                     elif difficulty == 3:
-                        (piecex, piecey), choice = solve.tier1_choice(turn)
+                        (piecex, piecey), choice = solve.tier1_choice(turn_color)
                     game_board.simple_move(
                         (piecex, piecey), (choice[1], choice[0]), "b")
                     change = True
                 except TypeError:
-                    logging.warning("(game.py in main): Type error. It's either critical script failure or true winning condition. Typical crutch)))")
-                    end_screen("White Wins!", time.time() - start_time)
+                    print((piecex, piecey), (choice[1], choice[0]))
+                    logging.warning(
+                        "Main: Type error. White wins. It's either critical script failure or true winning condition. Typical crutch)))\nAt turn %c.%d", turn_color, turn_number)
+                    end_screen("White Wins!", time() - start_time)
                 if change:
                     turn_number += 1
-                    wide_timer = time.time()
-                    game_board.reset_selected()
-                    if game_board.is_checked("b") and stateblack == 1:
-                        end_screen("White Wins!", time.time() - start_time)
-                    if game_board.is_checked("w") and statewhite == 1:
-                        end_screen("Black Wins!", time.time() - start_time)
-                    turn = "w"
-# ----------------------------------------------------------------------------------------------------------------------
-            elif (turn == "w" and game_mode == 1) or game_mode == 0:
+                    logging.debug("Main: Turn number: %d", turn_number)
+                    wide_timer = time()
+                    turn_color = "w"
+                statewhite = 1 if game_board.is_checked("w") else 0
+                stateblack = 1 if game_board.is_checked("b") else 0
+# game_mode = 1. BLACK - AI, WHITE - PLAYER. game_mode = 0 BLACK - PLAYER, WHITE - PLAYER. -----------------------------
+            elif (turn_color == "w" and game_mode == 1) or game_mode == 0:
+                if turn_color == "b" and statewhite == 1:
+                    logging.debug(
+                        "Main: Black wins. White ended its turn with checked king. At turn: %d", turn_number)
+                    end_screen("Black Wins!", time() - start_time)
+                elif turn_color == "w" and stateblack == 1:
+                    logging.debug(
+                        "Main: White wins. Black ended its turn with checked king. At turn: %d", turn_number)
+                    end_screen("White Wins!", time() - start_time)
+                change = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     clicked_position = pygame.mouse.get_pos()
                     game_board.update_moves()
                     try:
-                        i, j = click(clicked_position)
-                        change = game_board.select(i, j, turn)
+                        cell_x, cell_y = click(clicked_position)
+                        change = game_board.select(cell_x, cell_y, turn_color)
                         game_board.update_moves()
                     except AttributeError:
-                        logging.warning("(game.py in main): Non-terminal script error. Selection error lead to game_board.select(i, j, turn)")
+                        logging.warning(
+                            "Main: Non-terminal script error. Selection error lead to game_board.select(i, j, turn)")
                         change = False
                     except TypeError:
-                        logging.debug("(game.py in main): Non-terminal TypeError originated at click(clicked_position)")
+                        logging.warning(
+                            "Main: Non-terminal TypeError originated at click(clicked_position)")
                         change = False
                     if change:
                         turn_number += 1
-                        wide_timer = time.time()
-                        if turn == "w":
-                            game_board.reset_selected()
-                            if game_board.is_checked("w") and statewhite == 1:
-                                end_screen("Black Wins!",
-                                           time.time() - start_time)
-                            if game_board.is_checked("b") and stateblack == 1:
-                                end_screen("White Wins!",
-                                           time.time() - start_time)
-                            turn = "b"
-                        else:
-                            game_board.reset_selected()
-                            if game_board.is_checked("b") and stateblack == 1:
-                                end_screen("White Wins!",
-                                           time.time() - start_time)
-                            if game_board.is_checked("w") and statewhite == 1:
-                                end_screen("Black Wins!",
-                                           time.time() - start_time)
-                            turn = "w"
-                    if game_board.is_checked("w"):
-                        statewhite = 1
-                    else:
-                        statewhite = 0
-                    if game_board.is_checked("b"):
-                        stateblack = 1
-                    else:
-                        stateblack = 0
+                        logging.debug("Main: Turn number: %d", turn_number)
+                        wide_timer = time()
+                        game_board.reset_selected()
+                        turn_color = "w" if turn_color == "b" else "b"
+                    statewhite = 1 if game_board.is_checked("w") else 0
+                    stateblack = 1 if game_board.is_checked("b") else 0
 
 
 # ----------------------------------------------------------------------------------------------------------------------
