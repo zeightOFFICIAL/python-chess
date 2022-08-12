@@ -1,4 +1,4 @@
-# ver 906
+# ver 907
 # game.py
 # libraries ============================================================================================================
 from sys import exit
@@ -8,11 +8,6 @@ import pygame
 from configuration.flowingconfig import *
 from scripts.algorithm import Solution
 from gameobjects.board import Board
-
-# setting up debug =====================================================================================================
-if debug_mode == 1:
-    logging.basicConfig(
-        format='log:%(levelname)s:%(filename)s:%(lineno)d - %(message)s', level=logging.DEBUG)
 
 # resources ============================================================================================================
 raw_board = pygame.image.load("resources/images/eq_chessboard.png")
@@ -149,8 +144,8 @@ def click(pos):
 
 # main -----------------------------------------------------------------------------------------------------------------
 def main():
-    logging.debug("Main: Game started: %d-%d, %d",
-                  game_mode, difficulty, time_restriction)
+    logging.debug("Main: Game started: %d, limit: %d",
+                  game_mode * (difficulty + 1), time_restriction)
     white_time, black_time = time_restriction_seconds, time_restriction_seconds
     wide_timer, start_time = time(), time()
     statewhite, stateblack = 0, 0
@@ -195,7 +190,7 @@ def main():
                         end_screen("Black Wins!", time() - start_time)
                     else:
                         end_screen("White Wins!", time() - start_time)
-                if event.key == pygame.K_p:
+                if event.key == pygame.K_p and game_mode == 0:
                     if turn_color == "w":
                         white_wants_draw = 1 if white_wants_draw == 0 else 0
                     if turn_color == "b":
@@ -228,7 +223,7 @@ def main():
                     change = True
                 except TypeError:
                     logging.warning(
-                        "Main: Type error. White wins. It's either critical script failure or true winning condition. Typical crutch)))\nAt turn %c.%d", turn_color, turn_number)
+                        "Main: Type error. White wins. It's either critical script failure or true winning condition. Typical crutch))) At turn %c.%d", turn_color, turn_number)
                     end_screen("White Wins!", time() - start_time)
                 if change:
                     turn_number += 1
@@ -254,7 +249,6 @@ def main():
                     try:
                         cell_x, cell_y = click(clicked_position)
                         change = game_board.select(cell_x, cell_y, turn_color)
-                        game_board.update_moves()
                     except AttributeError:
                         logging.warning(
                             "Main: Non-terminal script error. Selection error lead to game_board.select(i, j, turn)")
@@ -263,6 +257,8 @@ def main():
                         logging.warning(
                             "Main: Non-terminal TypeError originated at click(clicked_position)")
                         change = False
+                    finally:
+                        game_board.update_moves()
                     if change:
                         turn_number += 1
                         logging.debug("Main: Turn number: %d", turn_number)

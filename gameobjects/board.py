@@ -1,13 +1,8 @@
-# ver 906
+# ver 907
 # board.py
-# project libraries ====================================================================================================
-from gameobjects.piece import Bishop, King, Knight, Rook, Queen, Pawn
+# libraries ============================================================================================================
 from configuration.flowingconfig import *
-
-# setting up debug =====================================================================================================
-if debug_mode == 1:
-    logging.basicConfig(
-        format='log:%(levelname)s:%(filename)s:%(lineno)d - %(message)s', level=logging.DEBUG)
+from gameobjects.piece import Bishop, King, Knight, Rook, Queen, Pawn
 
 
 # chessboard class =====================================================================================================
@@ -41,6 +36,7 @@ class Board:
         self.board[7][7] = Rook(7, 7, "w")
         for line in range(0, 8):
             self.board[6][line] = Pawn(6, line, "w")
+        logging.debug("Set chessboard: figures are set to a normal chess game")
 
 # functions ============================================================================================================
     def update_moves(self):
@@ -73,8 +69,6 @@ class Board:
                     if self.board[i][j].pawn:
                         self.board[i][j] = 0
                         self.board[i][j] = Queen(i, j, color)
-                        logging.debug(
-                            "pawn to queen: Pawn at the end (%d, %d) changed to %s-queen", i, j, color)
         if color == "b":
             i = 7
             for j in range(0, 8):
@@ -82,8 +76,6 @@ class Board:
                     if self.board[i][j].pawn:
                         self.board[i][j] = 0
                         self.board[i][j] = Queen(i, j, color)
-                        logging.debug(
-                            "pawn to queen: Pawn at the end (%d, %d) changed to %s-queen", i, j, color)
 
     def is_checked(self, color):
         self.update_moves()
@@ -96,7 +88,7 @@ class Board:
                         king_pos = (j, i)
         if king_pos in danger_moves:
             logging.debug(
-                "checked: %s-king is under check at (%d, %d)", color, king_pos[0], king_pos[1])
+                "Checked: %s-king is under check at (%d, %d)", color, king_pos[0], king_pos[1])
             return True
         return False
 
@@ -151,6 +143,8 @@ class Board:
         new_board[dst[0]][dst[1]] = new_board[src[0]][src[1]]
         new_board[src[0]][src[1]] = 0
         self.board = new_board
+        # this code is so arranged that you cannot intentionally place your king under check, yet you may still miss the
+        # the upcoming checkmate if you didn't not avoid the check in the previous turn.
         if self.is_checked(color) and not (checked_before and self.is_checked(color)):
             changed = False
             new_board = self.board[:]

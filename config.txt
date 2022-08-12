@@ -1,4 +1,5 @@
 game_mode=1
-difficulty=2
+difficulty=1
 visual_set=0
 time_restriction=15
+fps_max=90

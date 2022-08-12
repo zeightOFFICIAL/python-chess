@@ -24,8 +24,9 @@ Python 3.9
 fully compatible with:
 Python 3.6.9
 
-09.08.2022
-ver 906
+12.08.2022
+ver 907
+main.py
 """
 
 import game

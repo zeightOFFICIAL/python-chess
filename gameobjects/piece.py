@@ -1,6 +1,6 @@
-# ver 906
+# ver 907
 # piece.py
-# python libraries =====================================================================================================
+# libraries ============================================================================================================
 import pygame
 
 # resources ============================================================================================================
@@ -49,8 +49,8 @@ if visual_set != 0:
             "resources/images/"+str(visual_set)+"/b_select.png")
         raw_select2 = pygame.image.load(
             "resources/images/"+str(visual_set)+"/b2_select.png")
-    except FileNotFoundError or FileExistsError:
-        logging.debug("load visual set: Cutstom visual set cannot be loaded")
+    except (FileNotFoundError, FileExistsError, TypeError) as e:
+        logging.debug("Load visual set: custom visual set cannot be loaded")
 black_all = [b_bishop, b_king, b_knight, b_pawn, b_queen, b_rook]
 white_all = [w_bishop, w_king, w_knight, w_pawn, w_queen, w_rook]
 black_all_scaled = []

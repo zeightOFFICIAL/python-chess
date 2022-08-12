@@ -1,11 +1,12 @@
-# ver 906
+# ver 907
 # algorithm.py
-# python libraries =====================================================================================================
+# libraries ============================================================================================================
 import copy
 import random
 from math import inf
 # ----------------------------------------------------------------------------------------------------------------------
 from scripts.evaluate import evaluate_board_advanced, evaluate_board
+from configuration.flowingconfig import *
 
 
 # class for algorithmic solution =======================================================================================
@@ -41,6 +42,7 @@ class Solution:
         else:
             if len(all_moves) <= 0:
                 return -100
+            logging.debug("Random choice: total moves: %d", len(all_moves))
             return random.choice(all_moves)
 
 # diff. 1 evaluation ---------------------------------------------------------------------------------------------------
@@ -75,7 +77,9 @@ class Solution:
                             best_move = (
                                 piece.row, piece.col), (move[0], move[1])
         if best_value == self.evaluation and not was_checked:
+            logging.debug("Eval. choice: all moves are equally evaluated, -> random choice")
             return self.random_choice(color)
+        logging.debug("Eval. choice: the most arithmetically profitable move, has value of %d in comparison to %d", best_value, self.evaluation)
         return best_move
 
 # diff. 2 minimax depth 2, advanced evaluation -------------------------------------------------------------------------
