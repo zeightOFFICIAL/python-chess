@@ -1,4 +1,4 @@
-# ver 907
+# ver 908
 # algorithm.py
 # libraries ============================================================================================================
 import copy
@@ -108,12 +108,15 @@ class Solution:
                                         new_board_2, original_color)
                         total_value = evaluate_board_advanced(
                             new_board_1, original_color) + min_value
+                        logging.debug("Minimax2: the best move by white, player has value %d", min_value)
                         if total_value > max_value:
                             max_value = total_value
                             maxed_move = (
                                 piece_1.row, piece_1.col), (move_1[0], move_1[1])
             if self.evaluation == max_value:
+                logging.debug("Minimax2: the moves are arithmetically equal. -> random choice")
                 return self.random_choice(original_color)
+            logging.debug("Minimax2: the best (most efficient) move for black has value of %d", max_value)
             return maxed_move
         was_checked = self.board.is_checked(color)
         if was_checked:

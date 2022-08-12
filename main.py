@@ -25,7 +25,7 @@ fully compatible with:
 Python 3.6.9
 
 12.08.2022
-ver 907
+ver 908
 main.py
 """
 

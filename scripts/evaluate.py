@@ -1,4 +1,4 @@
-# ver 907
+# ver 908
 # evaluate.py
 # libraries ============================================================================================================
 from numpy import flipud
@@ -61,30 +61,30 @@ def evaluate_board_advanced(board, color):
             if board.board[row][col] != 0:
                 if board.board[row][col].color == "b":
                     if board.board[row][col].__class__.__name__ == "Rook":
-                        white_score += 500 + flipud(rook_list)[row][col]
+                        black_score += 500 + flipud(rook_list)[row][col]
                     elif board.board[row][col].__class__.__name__ == "Pawn":
-                        white_score += 100 + flipud(pawn_list)[row][col]
+                        black_score += 100 + flipud(pawn_list)[row][col]
                     elif board.board[row][col].__class__.__name__ == "Bishop":
-                        white_score += 330 + flipud(bishop_list)[row][col]
+                        black_score += 330 + flipud(bishop_list)[row][col]
                     elif board.board[row][col].__class__.__name__ == "Knight":
-                        white_score += 320 + flipud(knight_list)[row][col]
+                        black_score += 320 + flipud(knight_list)[row][col]
                     elif board.board[row][col].__class__.__name__ == "Queen":
-                        white_score += 900 + flipud(queen_list)[row][col]
+                        black_score += 900 + flipud(queen_list)[row][col]
                     elif board.board[row][col].__class__.__name__ == "King":
-                        white_score += 20000 + flipud(king_list)[row][col]
+                        black_score += 20000 + flipud(king_list)[row][col]
                 else:
                     if board.board[row][col].__class__.__name__ == "Rook":
-                        black_score += 500 + rook_list[row][col]
+                        white_score += 500 + rook_list[row][col]
                     elif board.board[row][col].__class__.__name__ == "Pawn":
-                        black_score += 100 + pawn_list[row][col]
+                        white_score += 100 + pawn_list[row][col]
                     elif board.board[row][col].__class__.__name__ == "Bishop":
-                        black_score += 330 + bishop_list[row][col]
+                        white_score += 330 + bishop_list[row][col]
                     elif board.board[row][col].__class__.__name__ == "Knight":
-                        black_score += 320 + knight_list[row][col]
+                        white_score += 320 + knight_list[row][col]
                     elif board.board[row][col].__class__.__name__ == "Queen":
-                        black_score += 900 + queen_list[row][col]
+                        white_score += 900 + queen_list[row][col]
                     elif board.board[row][col].__class__.__name__ == "King":
-                        black_score += 20000 + king_list[row][col]
+                        white_score += 20000 + king_list[row][col]
     if color == "w":
         return white_score - black_score
     else:
