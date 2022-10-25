@@ -1,12 +1,13 @@
-# ver 907
+# ver 910
 # flowingconfig.py
+
 # libraries ============================================================================================================
 from screeninfo import get_monitors
 import logging
 
 # setting up defaults ==================================================================================================
 # debug [should not be turned on by user, and in production by developer] ----------------------------------------------
-debug_mode = 1
+debug_mode = 0
 if debug_mode == 1:
     logging.basicConfig(
         format='log:%(levelname)s:%(filename)s:%(lineno)d - %(message)s', level=logging.DEBUG)
@@ -19,23 +20,22 @@ fps_max = 36
 try:
     for display in get_monitors():
         if display.is_primary:
-            width = display.height
+            width = display.height - 90
             logging.debug(
                 "Auto-detection of screen height: Detected screen height: %d", width)
-            width -= 90
 except:
     logging.debug(
         "Auto-detection of screen height: Screen's height auto-detection failed. Applying default.")
     width = 600
 # game mode [changeable] -----------------------------------------------------------------------------------------------
-# 0 - PvP
-# 1 - PvE
+# 0 - PvP (hotseat)
+# 1 - PvE (versus script)
 game_mode = 0
 # if game mode is 1, then difficulty determines algorithms complexity [changeable] -------------------------------------
-# 0 - random
-# 1 - evaluation
-# 2 - minimax (released in build 800, adjusted in 910)
-# 3 - advanced minimax (released in build 800, adjusted in 910)
+# 0 - random choice
+# 1 - simple table evaluation 1-turn-deep
+# 2 - advanced table evaluation minimax 2-turns-deep (released in build 800, adjusted in 910)
+# 3 - advanced table evaluation minimax 3-turns-deep plus alpha-beta cut (released in build 800, adjusted in 910)
 difficulty = 0
 # padding size, distance between board and the window border [should not be changed] -----------------------------------
 padding_absolute = 130
@@ -48,15 +48,15 @@ freeze_time = 3
 
 # reading from file ====================================================================================================
 try:
-    f = open("config.txt")
-    lines = f.readlines()
+    config_file = open("config.txt")
+    lines = config_file.readlines()
     for line in lines:
-        name = str(line.split("=")[0])
-        if (name in ["game_mode", "difficulty", "visual_set", "freeze_time", "time_restriction"]):
-            var = int(line.split("=")[1])
-            locals()[name] = var
+        var_name = str(line.split("=")[0])
+        if (var_name in ["game_mode", "difficulty", "visual_set", "freeze_time", "time_restriction"]):
+            var_value = int(line.split("=")[1])
+            locals()[var_name] = var_value
             logging.debug(
-                "Reading config: Assign value %d to parameter %s", var, name)
+                "Reading config: Assign value %d to parameter %s", var_value, var_name)
 except (FileExistsError, AttributeError, ValueError, FileNotFoundError) as e:
     logging.warning(
         "Reading config: Config file is corrupted, does not exist or is unreadable, possibly parsing error.\nNot parsed values are set to default.")
@@ -70,11 +70,11 @@ freeze_time = 5 if (freeze_time > 10) or (freeze_time < 0) else freeze_time
 
 # static and calculated values =========================================================================================
 height = width
-padding_abs_half = padding_absolute // 2
-top_left_corner = (padding_abs_half, padding_abs_half)
+padding_half = padding_absolute // 2
+top_left_corner = (padding_half, padding_half)
+top_right_corner = (width - padding_absolute, padding_half)
+bottom_left_corner = (padding_half, width - padding_absolute)
 bottom_right_corner = (width - padding_absolute, width - padding_absolute)
-top_right_corner = (width - padding_absolute, padding_abs_half)
-bottom_left_corner = (padding_abs_half, width - padding_absolute)
 cell_size_x = (width - padding_absolute) / 8
 cell_size_y = (height - padding_absolute) / 8
 time_restriction_seconds = 60 * time_restriction

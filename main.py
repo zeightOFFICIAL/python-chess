@@ -3,7 +3,7 @@ Algorithms and data structures
 Project
 Chess game (PyChess)
 Game itself and algorithm for playing
-IKPI-04 (2020)
+IKPI-04 (2022)
 Saganenko Artemii, Kuksin Alexander
 
 main.py
@@ -23,9 +23,11 @@ PyCharm 2021.3.3
 Python 3.9
 fully compatible with:
 Python 3.6.9
+fully compatible with:
+Python 3.11.0
 
-12.08.2022
-ver 908
+25.10.2022
+ver 910
 main.py
 """
 

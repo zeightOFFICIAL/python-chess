@@ -1,4 +1,4 @@
-# ver 907
+# ver 910
 # game.py
 # libraries ============================================================================================================
 from sys import exit
@@ -37,7 +37,7 @@ primal_help_font = pygame.font.SysFont("arial", int(width*0.053), bold=True)
 # FUNCTION to redraw the gamewindow. renders the new one from scrap, and updates
 def redraw_gamewindow(board_to_render, player1_time, player2_time, state_white, state_black):
     pygame.draw.rect(win, (0, 0, 0), (0, 0, width, width))
-    win.blit(scaled_board, (padding_abs_half, padding_abs_half))
+    win.blit(scaled_board, (padding_half, padding_half))
     board_to_render.draw(win)
     format_time_p1 = f'{player1_time // 60:d}:{player1_time % 60:02d}'
     format_time_p2 = f'{player2_time // 60:d}:{player2_time % 60:02d}'
@@ -48,17 +48,17 @@ def redraw_gamewindow(board_to_render, player1_time, player2_time, state_white, 
     if state_white == 1:
         text_state1 = king_condition_font.render(
             "White King is under check!", True, (255, 255, 255), (0, 0, 0))
-        win.blit(text_state1, (padding_abs_half,
-                 width - padding_abs_half / 1.5))
+        win.blit(text_state1, (padding_half,
+                 width - padding_half / 1.5))
     if state_black == 1:
         text_state2 = king_condition_font.render(
             "Black King is under check!", True, (255, 255, 255), (0, 0, 0))
-        win.blit(text_state2, (width - padding_abs_half - text_state2.get_width(),
-                               padding_abs_half - text_state2.get_height() * 1.5))
-    win.blit(text_time1, (width - padding_abs_half - text_time1.get_width(),
-                          width - padding_abs_half + text_time1.get_height()))
-    win.blit(text_time2, (padding_abs_half,
-             padding_abs_half - text_time2.get_height() * 2))
+        win.blit(text_state2, (width - padding_half - text_state2.get_width(),
+                               padding_half - text_state2.get_height() * 1.5))
+    win.blit(text_time1, (width - padding_half - text_time1.get_width(),
+                          width - padding_half + text_time1.get_height()))
+    win.blit(text_time2, (padding_half,
+             padding_half - text_time2.get_height() * 2))
     pygame.display.update()
 
 

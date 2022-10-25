@@ -1,4 +1,4 @@
-# ver 907
+# ver 910
 # board.py
 # libraries ============================================================================================================
 from configuration.flowingconfig import *
@@ -7,6 +7,7 @@ from gameobjects.piece import Bishop, King, Knight, Rook, Queen, Pawn
 
 # chessboard class =====================================================================================================
 # noinspection PyTypeChecker (PyCharm throws a warning considering unexpected value in 2d array. Class instead of '0' being integer)
+
 class Board:
     def __init__(self, rows, cols):
         self.rows = rows
