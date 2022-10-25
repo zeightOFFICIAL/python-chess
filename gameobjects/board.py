@@ -1,12 +1,15 @@
-# ver 910
+# ver 912
 # board.py
+
+
 # libraries ============================================================================================================
 from configuration.flowingconfig import *
 from gameobjects.piece import Bishop, King, Knight, Rook, Queen, Pawn
 
 
 # chessboard class =====================================================================================================
-# noinspection PyTypeChecker (PyCharm throws a warning considering unexpected value in 2d array. Class instead of '0' being integer)
+# noinspection PyTypeChecker
+# (PyCharm throws a warning considering unexpected value in 2d array. Class instead of '0' being integer)
 
 class Board:
     def __init__(self, rows, cols):
@@ -24,8 +27,8 @@ class Board:
         self.board[0][5] = Bishop(0, 5, "b")
         self.board[0][6] = Knight(0, 6, "b")
         self.board[0][7] = Rook(0, 7, "b")
-        for line in range(0, 8):
-            self.board[1][line] = Pawn(1, line, "b")
+        for board_line in range(0, 8):
+            self.board[1][board_line] = Pawn(1, board_line, "b")
 
         self.board[7][0] = Rook(7, 0, "w")
         self.board[7][1] = Knight(7, 1, "w")
@@ -35,75 +38,73 @@ class Board:
         self.board[7][5] = Bishop(7, 5, "w")
         self.board[7][6] = Knight(7, 6, "w")
         self.board[7][7] = Rook(7, 7, "w")
-        for line in range(0, 8):
-            self.board[6][line] = Pawn(6, line, "w")
+        for board_line in range(0, 8):
+            self.board[6][board_line] = Pawn(6, board_line, "w")
         logging.debug("Set chessboard: figures are set to a normal chess game")
 
-# functions ============================================================================================================
+    # functions ========================================================================================================
     def update_moves(self):
-        for i in range(self.rows):
-            for j in range(self.cols):
-                if self.board[i][j] != 0:
-                    self.board[i][j].update_valid_moves(self.board)
+        for row_index in range(self.rows):
+            for col_index in range(self.cols):
+                if self.board[row_index][col_index] != 0:
+                    self.board[row_index][col_index].update_valid_moves(self.board)
 
     def draw(self, win):
-        for i in range(self.rows):
-            for j in range(self.cols):
-                if self.board[i][j] != 0:
-                    self.board[i][j].draw(win)
+        for row_index in range(self.rows):
+            for col_index in range(self.cols):
+                if self.board[row_index][col_index] != 0:
+                    self.board[row_index][col_index].draw(win)
 
     def get_danger_moves(self, color):
         danger_moves = []
-        for i in range(self.rows):
-            for j in range(self.cols):
-                if self.board[i][j] != 0:
-                    if self.board[i][j].color != color:
-                        for move in self.board[i][j].move_list:
+        for row_index in range(self.rows):
+            for col_index in range(self.cols):
+                if self.board[row_index][col_index] != 0:
+                    if self.board[row_index][col_index].color != color:
+                        for move in self.board[row_index][col_index].move_list:
                             danger_moves.append(move)
         return danger_moves
 
-    def is_attheend(self, color):
+    def piece_at_the_end(self, color):
         if color == "w":
-            i = 0
-            for j in range(0, 8):
-                if self.board[i][j] != 0:
-                    if self.board[i][j].pawn:
-                        self.board[i][j] = 0
-                        self.board[i][j] = Queen(i, j, color)
+            white_end = 0
+            for col_index in range(0, 8):
+                if self.board[white_end][col_index] != 0:
+                    if self.board[white_end][col_index].pawn:
+                        self.board[white_end][col_index] = 0
+                        self.board[white_end][col_index] = Queen(white_end, col_index, color)
         if color == "b":
-            i = 7
-            for j in range(0, 8):
-                if self.board[i][j] != 0:
-                    if self.board[i][j].pawn:
-                        self.board[i][j] = 0
-                        self.board[i][j] = Queen(i, j, color)
+            black_end = 7
+            for col_index in range(0, 8):
+                if self.board[black_end][col_index] != 0:
+                    if self.board[black_end][col_index].pawn:
+                        self.board[black_end][col_index] = 0
+                        self.board[black_end][col_index] = Queen(black_end, col_index, color)
 
-    def is_checked(self, color):
+    def piece_is_checked(self, color):
         self.update_moves()
         danger_moves = self.get_danger_moves(color)
         king_pos = (-1, -1)
-        for i in range(self.rows):
-            for j in range(self.cols):
-                if self.board[i][j] != 0:
-                    if self.board[i][j].king and self.board[i][j].color == color:
-                        king_pos = (j, i)
+        for row_index in range(self.rows):
+            for col_index in range(self.cols):
+                if self.board[row_index][col_index] != 0:
+                    if self.board[row_index][col_index].king and self.board[row_index][col_index].color == color:
+                        king_pos = (col_index, row_index)
         if king_pos in danger_moves:
-            logging.debug(
-                "Checked: %s-king is under check at (%d, %d)", color, king_pos[0], king_pos[1])
+            logging.debug("Checked: %s-king is under check at (%d, %d)", color, king_pos[0], king_pos[1])
             return True
         return False
 
     def select(self, col, row, color):
         previous_select = (-1, -1)
         changed = False
-        for i in range(self.rows):
-            for j in range(self.cols):
-                if self.board[i][j] != 0:
-                    if self.board[i][j].selected:
-                        previous_select = (i, j)
+        for row_index in range(self.rows):
+            for col_index in range(self.cols):
+                if self.board[row_index][col_index] != 0:
+                    if self.board[row_index][col_index].selected:
+                        previous_select = (row_index, col_index)
         if self.board[row][col] == 0 and previous_select != (-1, -1):
-            moves = self.board[previous_select[0]
-                               ][previous_select[1]].move_list
+            moves = self.board[previous_select[0]][previous_select[1]].move_list
             if (col, row) in moves:
                 changed = self.move(previous_select, (row, col), color)
             self.reset_selected()
@@ -114,8 +115,7 @@ class Board:
                     self.board[row][col].selected = True
             else:
                 if self.board[previous_select[0]][previous_select[1]].color != self.board[row][col].color:
-                    moves = self.board[previous_select[0]
-                                       ][previous_select[1]].move_list
+                    moves = self.board[previous_select[0]][previous_select[1]].move_list
                     if (col, row) in moves:
                         changed = self.move(previous_select, (row, col), color)
                     self.reset_selected()
@@ -128,48 +128,48 @@ class Board:
         return changed
 
     def reset_selected(self):
-        for i in range(self.rows):
-            for j in range(self.cols):
-                if self.board[i][j] != 0:
-                    self.board[i][j].selected = False
+        for row_index in range(self.rows):
+            for col_index in range(self.cols):
+                if self.board[row_index][col_index] != 0:
+                    self.board[row_index][col_index].selected = False
 
-# 'move' for player ----------------------------------------------------------------------------------------------------
-    def move(self, src, dst, color):
-        checked_before = self.is_checked(color)
+    # 'move' for player ------------------------------------------------------------------------------------------------
+    def move(self, point_from, point_to, color):
+        checked_before = self.piece_is_checked(color)
         changed = True
         new_board = self.board[:]
-        if new_board[src[0]][src[1]].pawn:
-            new_board[src[0]][src[1]].first = False
-        new_board[src[0]][src[1]].change_pos((dst[0], dst[1]))
-        new_board[dst[0]][dst[1]] = new_board[src[0]][src[1]]
-        new_board[src[0]][src[1]] = 0
+        if new_board[point_from[0]][point_from[1]].pawn:
+            new_board[point_from[0]][point_from[1]].first = False
+        new_board[point_from[0]][point_from[1]].change_pos((point_to[0], point_to[1]))
+        new_board[point_to[0]][point_to[1]] = new_board[point_from[0]][point_from[1]]
+        new_board[point_from[0]][point_from[1]] = 0
         self.board = new_board
         # this code is so arranged that you cannot intentionally place your king under check, yet you may still miss the
         # the upcoming checkmate if you didn't not avoid the check in the previous turn.
-        if self.is_checked(color) and not (checked_before and self.is_checked(color)):
+        if self.piece_is_checked(color) and not (checked_before and self.piece_is_checked(color)):
             changed = False
             new_board = self.board[:]
-            new_board[dst[0]][dst[1]].change_pos((src[0], src[1]))
-            if new_board[dst[0]][dst[1]].pawn:
-                new_board[dst[0]][dst[1]].first = True
-            new_board[dst[0]][dst[1]].change_pos((src[0], src[1]))
-            new_board[src[0]][src[1]] = new_board[dst[0]][dst[1]]
-            new_board[dst[0]][dst[1]] = 0
+            new_board[point_to[0]][point_to[1]].change_pos((point_from[0], point_from[1]))
+            if new_board[point_to[0]][point_to[1]].pawn:
+                new_board[point_to[0]][point_to[1]].first = True
+            new_board[point_to[0]][point_to[1]].change_pos((point_from[0], point_from[1]))
+            new_board[point_from[0]][point_from[1]] = new_board[point_to[0]][point_to[1]]
+            new_board[point_to[0]][point_to[1]] = 0
             self.board = new_board
         else:
             self.reset_selected()
-        self.is_attheend(color)
+        self.piece_at_the_end(color)
         self.update_moves()
         return changed
 
-# 'move' for chess algorithm -------------------------------------------------------------------------------------------
-    def simple_move(self, src, dst, color):
+    # 'move' for chess algorithm ---------------------------------------------------------------------------------------
+    def simple_move(self, point_from, point_to, color):
         new_board = self.board[:]
-        if new_board[src[0]][src[1]].pawn:
-            new_board[src[0]][src[1]].first = False
-        new_board[src[0]][src[1]].change_pos((dst[0], dst[1]))
-        new_board[dst[0]][dst[1]] = new_board[src[0]][src[1]]
-        new_board[src[0]][src[1]] = 0
+        if new_board[point_from[0]][point_from[1]].pawn:
+            new_board[point_from[0]][point_from[1]].first = False
+        new_board[point_from[0]][point_from[1]].change_pos((point_to[0], point_to[1]))
+        new_board[point_to[0]][point_to[1]] = new_board[point_from[0]][point_from[1]]
+        new_board[point_from[0]][point_from[1]] = 0
         self.board = new_board
-        self.is_attheend(color)
+        self.piece_at_the_end(color)
         self.update_moves()

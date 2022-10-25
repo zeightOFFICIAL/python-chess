@@ -1,4 +1,4 @@
 game_mode=1
-difficulty=3
+difficulty=1
 visual_set=0
 time_restriction=15

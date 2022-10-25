@@ -21,13 +21,13 @@ main.py
 originally build on:
 PyCharm 2021.3.3
 Python 3.9
+
 fully compatible with:
 Python 3.6.9
-fully compatible with:
 Python 3.11.0
 
 25.10.2022
-ver 910
+ver 912
 main.py
 """
 
