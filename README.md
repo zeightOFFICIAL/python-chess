@@ -1,5 +1,5 @@
 
-# PyChess
+# Python chess with minimax AI
 
 ## Simple and extremely buggy Chess with graphics and Minimax Algorithm for playing (AI)
 
