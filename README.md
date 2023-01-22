@@ -38,11 +38,12 @@ python main.py
 ### Configuration
 
 For configuration use config.txt
-game_mode=X (0 - PvP, 1 - PvE),
-difficulty=X (0, 1, 2, 3 - difficulty),
-visual_set=X (subfolder name - alternative visual set),
-freeze_time=X (0..10 - delay before game starts),
-time_restriction=X (0.5f..60000 - time limit)
+
+* game_mode=X (0 - PvP, 1 - PvE),
+* difficulty=X (0, 1, 2, 3 - difficulty),
+* visual_set=X (subfolder name - alternative visual set),
+* freeze_time=X (0..10 - delay before game starts),
+* time_restriction=X (0.5f..60000 - time limit)
 
 ### Ongoing unfixed bugs
 
