@@ -1,4 +1,9 @@
-# ver 912
+"""
+PyChess with minimax AI
+Copyright (C) 2023 Artemii Saganenko, Alexander Kuksin
+"""
+
+# ver 917
 # piece.py
 
 
