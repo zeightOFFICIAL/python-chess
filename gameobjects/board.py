@@ -3,7 +3,7 @@ PyChess with minimax AI
 Copyright (C) 2023 Artemii Saganenko, Alexander Kuksin
 """
 
-# ver 917
+# ver 917 fix for king checkmate bug
 # board.py
 
 
@@ -145,6 +145,8 @@ class Board:
         new_board = self.board[:]
         if new_board[point_from[0]][point_from[1]].pawn:
             new_board[point_from[0]][point_from[1]].first = False
+        prev_figure_src = new_board[point_from[0]][point_from[1]]
+        prev_figure_dst = new_board[point_to[0]][point_to[1]]
         new_board[point_from[0]][point_from[1]].change_pos((point_to[0], point_to[1]))
         new_board[point_to[0]][point_to[1]] = new_board[point_from[0]][point_from[1]]
         new_board[point_from[0]][point_from[1]] = 0
@@ -159,7 +161,7 @@ class Board:
                 new_board[point_to[0]][point_to[1]].first = True
             new_board[point_to[0]][point_to[1]].change_pos((point_from[0], point_from[1]))
             new_board[point_from[0]][point_from[1]] = new_board[point_to[0]][point_to[1]]
-            new_board[point_to[0]][point_to[1]] = 0
+            new_board[point_to[0]][point_to[1]] = prev_figure_dst
             self.board = new_board
         else:
             self.reset_selected()
