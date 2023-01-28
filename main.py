@@ -44,9 +44,10 @@ Python 3.9
 fully compatible with:
 Python 3.6.9
 Python 3.11.0
+Python 3.9.5
 
-22.01.2023
-ver 917
+28.01.2023
+ver 918
 main.py
 """
 

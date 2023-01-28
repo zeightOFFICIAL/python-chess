@@ -3,13 +3,14 @@ PyChess with minimax AI
 Copyright (C) 2023 Artemii Saganenko, Alexander Kuksin
 """
 
-# ver 917
+# ver 917/918 with time stamps commented
 # game.py
 
 
 # libraries ============================================================================================================
 from sys import exit
 from time import time
+from timeit import default_timer as timer
 
 import pygame
 
@@ -205,13 +206,25 @@ def main():
                 change = False
                 solve = Solution(game_board)
                 try:
+                    # start = timer()
                     (piecex, piecey), choice = solve.random_choice(turn_color)
+                    # end = timer()
+                    # print(end - start)
                     if difficulty == 1:
+                        # start = timer()
                         (piecex, piecey), choice = solve.tier3_choice(turn_color)
+                        # end = timer()
+                        # print(end - start)
                     elif difficulty == 2:
+                        # start = timer()
                         (piecex, piecey), choice = solve.tier2_choice(turn_color)
+                        # end = timer()
+                        # print(end - start)
                     elif difficulty == 3:
+                        # start = timer()
                         (piecex, piecey), choice = solve.tier1_choice(turn_color)
+                        # end = timer()
+                        # print(end - start)
                     game_board.simple_move(
                         (piecex, piecey), (choice[1], choice[0]), "b")
                     change = True

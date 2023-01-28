@@ -45,6 +45,8 @@ For configuration use config.txt
 * freeze_time=X (0..10 - delay before game starts),
 * time_restriction=X (0.5f..60000 - time limit)
 
-### Ongoing unfixed bugs
+### Not implemented
 
-* Player can eat enemy figure by king, and if this will lead to check, king will return to previous position (fixable)
+* Castling (roque)
+* En passant
+* Player can change pawn at the last cell only to a Queen
